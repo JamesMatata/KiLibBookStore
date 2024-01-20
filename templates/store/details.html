@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+{{ product.name }}
+{% endblock %}
+{% block web_content %}
+<main class="pt-5">
+<div class="container">
+
+        {% if messages %}
+            <div class="alert alert-primary" alert="{{ message.tags }}" role="alert">
+                {% for message in messages %}
+                    <p style="text-align: center;margin: 0">{{message}} - <a href="{% url 'accounts:wishlist' %}" class="alert-link">Your wishlist</a></p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="row g-3">
+            <div class="col-md-5 col-lg-5 order-md-first bg-light">
+                <img class="img-fluid mx-auto d-block" width="200px" alt="Responsive image" src="{{ product.image.url }}">
+            </div>
+            <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
+            <div>
+                <h1 class="mb-0 h4">{{ product.title }}</h1>
+            </div>
+            <hr>
+                <p>{{ product.description|slice:":355" }}...</p>
+                <div class="border">
+                    <div class="col border-bottom">
+                        <div class="row p-3">
+                            <div class="col-6">KiLib-Books</div>
+                            <div class="col-6 text-end"><span class="h4 fw-bold">Ksh.{{ product.price }}</span></div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="row p-3">
+                            <div class="col-6">
+                                <label for="select">Qty</label>
+                                <input type="number" name="bookNumber" id="quantity" style="width: 70px"/>
+
+                            </div>
+                            <div class="col-6 text-end">
+                                <button type="button" style="background-color: purple;color: white" id="add-button" value="{{ product.id }}" class="btn fw500">Add to
+                                    basket
+                                </button>
+                                {% if user.is_authenticated %}
+                                <a href="{% url 'accounts:user_wishlist' product.id %}" class="btn btn-light fw500" role="button" aria-disabled="true">Add-to-Wishlist</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <hr>
+
+      <div class="pb-3 h5">Related products</div>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3">
+
+          {% for product in related_products %}
+            <div class="col">
+              <div class="card shadow-sm">
+                  <div style="border-radius: 2px">
+                      <img  style="object-fit: contain;border-radius: 5px;height: 250px;width: 100%" alt="Responsive image" src="{{ product.image.url }}">
+                  </div>
+                <div class="card-body">
+                  <p class="card-text" style="line-height: 20px;max-height: 20px;overflow: hidden">
+                    <a class="text-dark text-decoration-none" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                  </p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted" style="line-height: 20px;max-height: 20px;overflow: hidden">Ksh.{{ product.price }}</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+
+      </div>
+
+</div>
+</main>
+<script>
+     $(document).on('click', '#add-button', function (e) {
+         e.preventDefault();
+         var quantity = $('#quantity').val();
+         $.ajax({
+             type: 'POST',
+             url: '{% url "basket:basket_add" %}',
+             data: {
+                 productid: $('#add-button').val(),
+                 productqty: quantity,
+                 csrfmiddlewaretoken: "{{ csrf_token }}",
+                 action: 'post'
+             },
+             success: function (json){
+                 document.getElementById("basket-qty").innerHTML = json.qty
+             },
+             error: function(xhr, errmsg, err){}
+         });
+     })
+</script>
+
+{% endblock %}

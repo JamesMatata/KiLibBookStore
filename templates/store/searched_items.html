@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+{% if category %}{{ category.name }}{% else %}Searched{% endif %}
+{% endblock %}
+{% block web_content %}
+
+
+<main>
+  <div class="album py-5 bg-light">
+    <div class="container">
+
+      <div class="pb-3 h5">Looking for</div>
+      <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5 g-3">
+
+        {% for product in items %}
+
+        <div class="col">
+          <div class="card shadow-sm">
+          <img class="img-fluid" style="object-fit: contain;border-radius: 5px;height: 250px;width: 100%" alt="Responsive image" src="{{ product.image.url }}">
+
+            <div class="card-body">
+              <p class="card-text" style="line-height: 20px;max-height: 20px;overflow: hidden">
+                <a class="text-dark text-decoration-none" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                <small class="text-muted" style="line-height: 20px;max-height: 20px;overflow: hidden">10min read</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% endfor %}
+
+      </div>
+    </div>
+  </div>
+
+
+</main>
+
+{% endblock %}

@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Basket Summary{% endblock %}
+{% block web_content %}
+    <main class="pt-5">
+      <div class="container">
+      {% if messages %}
+            <div class="alert alert-primary" alert="{{ message.tags }}" role="alert">
+                {% for message in messages %}
+                    {{message}} - <a href="{% url 'accounts:wishlist' %}" class="alert-link">Your wishlist</a>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="row g-3">
+        {% if basket|length == 0 %}
+        <div class="col-12">Your basket is empty <a href="{% url 'store:all_products' %}">Shop</a></div>
+        {% else %}
+            <h1 class="h5">Shopping basket</h1>
+            {% for item in basket %}
+                {% with product=item.product %}
+                    <div data-index="{{product.id}}" class="row mb-4 border product-item">
+                      <div class="col-md-3 col-lg-2 order-md-first bg-light">
+                        <img class="img-fluid mx-auto d-block" width="120px" alt="Responsive image" src="{{ product.image.url }}">
+                      </div>
+                      <div class="col-md-9 col-lg-10 ps-md-3 ps-lg-10">
+                        <a href="{{ product.get_absolute_url }}" class="text-decoration-none text-reset">
+                          <h1 class="h5 pt-2">{{ product.title }}</h1>
+                        </a>
+                        <div class="border">
+                          <div class="col border-bottom">
+                            <div class="row p-3">
+                              <div class="col-6">KiLib Books</div>
+                              <div class="col-6 text-end"><span class="h6 fw-bold">Ksh.{{ product.price }}</span></div>
+                            </div>
+                          </div>
+                          <div class="col">
+                              <div class="row p-3">
+                                  <div class="col-6">
+                                      <label for="quantity">Qty</label>
+                                        <input type="number" name="bookNumber" id="quantity{{ product.id }}" value="{{ item.qty }}" style="width: 70px;padding-bottom: 5px;border: 1px solid purple;border-radius: 3px"/>
+
+                                        <button type="button" id="update-button" data-index="{{product.id}}"
+                                          class="btn btn-outline-secondary btn-sm update-button" style="border: 1px solid purple;color: purple">
+                                          Update
+                                        </button>
+                                        <button type="button" id="delete-button" data-index="{{product.id}}"
+                                          class="btn btn-outline-secondary btn-sm delete-button" style="border: 1px solid red;color: red">
+                                          Delete
+                                        </button>
+                                  </div>
+                                  <div class="col-6">
+                                    <div class="d-grid gap-2 ">
+                                        
+                                        {% if user.is_authenticated %}
+                                        <a role="button" style="margin-top: 10px;" href="{% url 'accounts:user_wishlist' product.id %}" class="btn btn-light" data-product-item="{{ p.id }}"  type="button">Save for later</a>
+                                        {% endif %}
+                                    </div>
+                                  </div>
+                              </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        <div class="col-12 text-end">
+            <div class="h6 fw-bold">Total: Ksh.<div id="subtotal" class="d-inline-flex">{{basket.get_total_price}}</div></div>
+            <div class="h6 fw-bold"><a role="button" style="background-color: purple;color: white" href="#" class="btn fw-bold" type="button">Checkout</a></div>
+        </div>
+        {% endif %}
+      </div>
+     </div>
+    </main>
+
+<script>
+   // Delete Item
+  $(document).on('click', '.delete-button', function (e) {
+    e.preventDefault();
+    var prodid = $(this).data('index');
+    $.ajax({
+      type: 'POST',
+      url: '{% url "basket:basket_delete" %}',
+      data: {
+        productid: $(this).data('index'),
+        csrfmiddlewaretoken: "{{csrf_token}}",
+        action: 'post'
+      },
+      success: function (json) {
+        $('.product-item[data-index="' + prodid + '"]').remove();
+        document.getElementById("subtotal").innerHTML = json.subtotal
+        document.getElementById("basket-qty").innerHTML = json.qty
+      },
+      error: function (xhr, errmsg, err) {}
+    });
+  })
+
+  // Update Item
+  $(document).on('click', '.update-button', function (e) {
+    e.preventDefault();
+    var prodid = $(this).data('index');
+    var quantity = $('#quantity' + prodid).val();
+    $.ajax({
+      type: 'POST',
+      url: '{% url "basket:basket_update" %}',
+      data: {
+        productid: $(this).data('index'),
+        productqty: quantity,
+        csrfmiddlewaretoken: "{{csrf_token}}",
+        action: 'post'
+      },
+      success: function (json) {
+        document.getElementById("basket-qty").innerHTML = json.qty
+        document.getElementById("subtotal").innerHTML = json.subtotal
+      },
+      error: function (xhr, errmsg, err) {}
+    });
+  })
+</script>
+
+{% endblock %}
