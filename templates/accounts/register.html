@@ -3,17 +3,6 @@
 {% block title %}Sign Up{% endblock %}
 
 {% block web_content %}
-    <style>
-        .labels{
-            font-size: 15px;
-        }
-        .form-select{
-            width: 80%;
-            font-size: 16px;
-            padding: 8px 5px;
-            margin-bottom: 5px;
-        }
-    </style>
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-primary" alert="{{ message.tags }}" role="alert">
@@ -42,20 +31,20 @@
                     <option value="Seller">Seller</option>
                 </select>
             </div>
-            <div style="width: 90%;margin: auto auto 5px;display: none;" id="sellerOptionExtraDetails">
-                <fieldset>
+            <div style="width: 80%;margin: auto auto 5px;display: none;" id="sellerOptionExtraDetails">
+                <fieldset style="border:1px solid #999; padding:6px;">
                     <legend style="color: rgb(85, 81, 81);font-size: 15px;">Business details</legend>
-                    <input class="inputs" type="text" placeholder="Enter your business name" name="bname"/><br>
-                    <input class="inputs" type="text" placeholder="Enter business email" name="bemail"/><br>
-                    <input class="inputs" type="text" placeholder="Enter business address" name="baddress"/><br>
+                    <input class="inputs" type="text" placeholder="Enter your business name" name="business_name"/><br>
+                    <input class="inputs" type="text" placeholder="Enter business email" name="business_email"/><br>
+                    <input class="inputs" type="text" placeholder="Enter business address" name="business_address"/><br>
                 </fieldset>  
             </div>
-            <input class="inputs" type="password" placeholder="Create a password" name="pass"/>
+            <input class="inputs" style="margin-top: 5px" type="password" placeholder="Create a password" name="pass"/>
             <input class="inputs" type="password" placeholder="Confirm password" name="pass2"/><br>
     
             <button type="submit" class="formButton">Register</button>
             <p style="text-align: center;font-size: 14px">
-                Already have an account? <a href="{% url 'accounts:login-page' %}" style="text-decoration: none;color: red">login</a>
+                Already have an account? <a href="#" style="text-decoration: none;color: red">login</a>
             </p>
         </form>
     </div>

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+ {% extends "base.html" %}
 {% load static %}
 {% block title %}
 {{ product.name }}
@@ -6,7 +6,39 @@
 {% block web_content %}
 <main class="pt-5">
 <div class="container">
-
+{% if user.is_authenticated and user.is_seller is not False %}
+    <div class="row g-3">
+                    <div class="col-md-5 col-lg-5 order-md-first bg-light" style="border: 1px solid rgba(128, 0, 128, 0.3);height: 400px">
+                        <img style="object-fit: contain;height: 100%;width: 100%;" alt="Book image" src="{{ product.image.url }}">
+                    </div>
+                    <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
+                    <div>
+                        <h1 class="mb-0 h4">{{ product.title }}</h1>
+                    </div>
+                        <hr style="color: purple;">
+                        <p>{{ product.description | slice:360 }}...</p>
+                        <div style="border: 1px solid rgba(128, 0, 128, 0.3);">
+                            <div class="col" style="border-bottom: 1px solid rgba(128, 0, 128, 0.3);">
+                                <div class="row p-3">
+                                    <div class="col-12">KiLib-store-Books</div>
+                                    <div class="col-6">
+                                        <p style="margin: 5px 0;float: right;">Price:<span style="font-weight: bold;"> Ksh.{{ product.price }}</span></p>
+                                    </div>
+                                    <div class="col-6"> 
+                                        <p style="margin: 5px auto;float: right;">Book_lease-rates:<span style="font-weight: bold;"> Ksh.{{ product.book_lease_rates }}/week</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                    <div style="width: 70%;margin: auto;">
+                                        <a href="{% url 'store:update_product' product.id %}"><button type="button" style="background-color: purple;color: white;width: 100%;margin-top: 5px;" value="{{ product.id }}" class="btn fw500">Edit-product-details</button></a>
+                                        <a href="{% url 'store:delete_product' product.id %}"><button type="button" style="background-color: red;color: white;width: 100%;margin-top: 5px;" value="{{ product.id }}" class="btn fw500">Delete-product</button></a>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+{% else %}
         {% if messages %}
             <div class="alert alert-primary" alert="{{ message.tags }}" role="alert">
                 {% for message in messages %}
@@ -16,18 +48,18 @@
         {% endif %}
         <div class="row g-3">
             <div class="col-md-5 col-lg-5 order-md-first bg-light">
-                <img class="img-fluid mx-auto d-block" width="200px" alt="Responsive image" src="{{ product.image.url }}">
+                <img class="img-fluid mx-auto d-block" style="border: 1px solid rgba(128, 0, 128, 0.3);height: 400px; object-fit: contain" alt="Responsive image" src="{{ product.image.url }}">
             </div>
             <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
-            <div>
-                <h1 class="mb-0 h4">{{ product.title }}</h1>
-            </div>
-            <hr>
+                <div>
+                    <h1 class="mb-0 h4">{{ product.title }}</h1>
+                </div>
+                <hr>
                 <p>{{ product.description|slice:":355" }}...</p>
                 <div class="border">
                     <div class="col border-bottom">
                         <div class="row p-3">
-                            <div class="col-6">KiLib-Books</div>
+                            <div class="col-6">{{ seller.business_name }}</div>
                             <div class="col-6 text-end"><span class="h4 fw-bold">Ksh.{{ product.price }}</span></div>
                         </div>
                     </div>
@@ -36,7 +68,7 @@
                             <div class="col-6">
                                 <label for="select">Qty</label>
                                 <input type="number" name="bookNumber" id="quantity" style="width: 70px"/>
-
+    
                             </div>
                             <div class="col-6 text-end">
                                 <button type="button" style="background-color: purple;color: white" id="add-button" value="{{ product.id }}" class="btn fw500">Add to
@@ -75,7 +107,7 @@
           {% endfor %}
 
       </div>
-
+{% endif %}
 </div>
 </main>
 <script>

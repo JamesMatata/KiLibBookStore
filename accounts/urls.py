@@ -3,7 +3,7 @@ from django.views.generic import TemplateView
 
 from . import views
 from .views import register, logoutuser, dashboard, add_to_wishlist, wishlist, edit_details, delete_user, buyer_login, \
-    seller_login
+    seller_login, seller_dashboard, orders, business_sells
 from django.contrib.auth import views as auth_views
 
 app_name = 'accounts'
@@ -39,12 +39,14 @@ urlpatterns = [
          name="password_change_done"),
     # Wishlist
     path("wishlist/", wishlist, name="wishlist"),
-    # path("order/", orders, name="order"),
+    path("order/", orders, name="order"),
     path("wishlist/add_to_wishlist/<int:id>", add_to_wishlist, name="user_wishlist"),
 
-    path('dashboard/', dashboard, name="dashboard"),
+    path('bdashboard/', dashboard, name="dashboard"),
+    path('sdashboard/', seller_dashboard, name="seller_dashboard"),
     path('profile/edit/', edit_details, name='edit_details'),
     path('profile/delete_user/', delete_user, name='delete_user'),
     path('profile/delete_confirm/', TemplateView.as_view(template_name="accounts/dashboard/delete_confirm.html"),
-         name='delete_confirmation')
+         name='delete_confirmation'),
+    path('sales', business_sells, name='sales'),
 ]

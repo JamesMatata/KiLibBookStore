@@ -1,68 +1,29 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %}Orders{% endblock %}
 
 {% block web_content %}
-<style>
-    body{
-            font-family: Arial, Helvetica, sans-serif;
-        }
-        .mainbody{
-            width: 50%;
-            margin: auto;
-            border-left: 2px solid purple;
-            border-right: 2px solid purple;
-            height: 1000px;
-        }
-        .receipt{
-            color: black;
-            background-color: white;
-            width: 95%;
-            margin: auto auto 15px;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
-            padding: 3px 8px;
-            border-top: 4px solid black;
-
-        }
-        table{
-            width: 100%;
-            background-color: purple;
-            border-spacing: 1px;
-        }
-        th{
-            padding: 6px 0;
-            background-color: purple;
-            color: white;
-        }
-        td{
-            padding: 4px 0;
-            text-align: center;
-            background-color: white;
-            font-size: 15px;
-        }
-
-</style>
-    <div class="mainbody">
+    <div class="receipts_main_body">
         <div>
             {% if orders %}
             {% for item in orders %}
                 <p style="font-weight: bold;text-align: center;color: gray;">{{ item.created }}</p>
                 <div class="receipt">
                     <h3 style="text-align: center;margin: 4px 0;text-decoration: underline;">KiLib receipt</h3>
-                    <table>
+                    <table class="order_table">
                         <tr>
-                            <th>No.</th>
-                            <th>Book</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
+                            <th class="order_table_headers">No.</th>
+                            <th class="order_table_headers">Book</th>
+                            <th class="order_table_headers">Quantity</th>
+                            <th class="order_table_headers">Price</th>
                         </tr>
                         {% for items in orderItems %}
                         {% if items.order == item %}
                             <tr>
-                                <td>1</td>
-                                <td>{{ items.product.title }}</td>
-                                <td>{{ items.quantity }}</td>
-                                <td>{{ items.price }}</td>
+                                <td class="order_table_data">1</td>
+                                <td class="order_table_data">{{ items.product.title }}</td>
+                                <td class="order_table_data">{{ items.quantity }}</td>
+                                <td class="order_table_data">{{ items.price }}</td>
                             </tr>
                         {% else %}
                         {% endif %}
@@ -92,7 +53,7 @@
                     {% if item.billing_status is not True %}
                         <div>
                             <form action="{% url 'payment:confirmPay' item.id %}" method="GET">
-                            <p style="font-weight: bold;color: red;text-align: center;margin: 4px 0;font-size: 15px;">Your payment is not confirmed yet! Please input your receipt number below to confirm</p>
+                            <p style="color: red;text-align: center;margin: 4px 0;font-size: 15px;">Your payment is not confirmed yet! Please input your receipt number below to confirm</p>
                             <div style="display: flex;">
                                 <div style="flex: 85%;">
                                     <input class="receiptNumber" style="width: 96%;padding: 6px 0;padding-left: 10px;border: none;border-bottom: 2px solid purple;font-size: 15px;" type="text" placeholder="Receipt Number.. Eg. GDFFDXX45" name="receiptnumber">
@@ -114,7 +75,7 @@
         {% endfor %}
 
         {% else %}
-            <p class="card-text">You have not made any order yet</p>
+            <p style="text-align: center; margin: 20px;font-size: 20px;font-weight: bold;">You have not made any order yet</p>
         {% endif %}
     </div>
 {% endblock %}

@@ -11,7 +11,9 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from validate_email import validate_email
 
 from accounts.forms import UserEditForm
+from accounts.models import Seller
 from accounts.token import account_activation_token
+from orders.models import Order, OrderItem
 from store.models import Product
 
 from django.contrib.auth import get_user_model
@@ -57,11 +59,11 @@ def wishlist(request):
     return render(request, 'accounts/dashboard/user_wish_list.html', {"wishlist": products})
 
 
-# @login_required
-# def orders(request):
-# orders = Order.objects.filter(user=request.user)
-# orderItems = OrderItem.objects.all()
-# return render(request, 'accounts/dashboard/orders.html', {"orders": orders, "orderItems": orderItems})
+@login_required
+def orders(request):
+    orderss = Order.objects.filter(user=request.user)
+    orderItems = OrderItem.objects.all()
+    return render(request, 'accounts/dashboard/orders.html', {"orders": orderss, "orderItems": orderItems})
 
 
 @login_required
@@ -78,7 +80,13 @@ def add_to_wishlist(request, id):
 
 @login_required
 def dashboard(request):
-    return render(request, 'accounts/dashboard/dashboard.html', {})
+    return render(request, 'accounts/dashboard/buyer_dashboard.html', {})
+
+
+@login_required
+def seller_dashboard(request):
+    business = get_object_or_404(Seller, user=request.user)
+    return render(request, 'accounts/dashboard/seller_dashboard.html', {'business': business})
 
 
 def register(request):
@@ -89,6 +97,13 @@ def register(request):
         username = request.POST.get('uname')
         email = request.POST.get('email')
         usertype = request.POST.get('user')
+        business_name = None
+        business_email = None
+        business_address = None
+        if usertype == 'Seller':
+            business_name = request.POST.get('business_name')
+            business_email = request.POST.get('business_email')
+            business_address = request.POST.get('business_address')
         password = request.POST.get('pass')
         password2 = request.POST.get('pass2')
 
@@ -130,7 +145,16 @@ def register(request):
             new_user.set_password(password)
             new_user.first_name = fname
             new_user.last_name = lname
+            if usertype == 'Seller':
+                new_user.is_seller = True
+            if usertype == 'Buyer':
+                new_user.is_buyer = True
             new_user.is_active = False
+            if usertype == 'Seller':
+                new_business = Seller(user=new_user, business_name=business_name,
+                                      business_email=business_email, business_address=business_address
+                                      )
+                new_business.save()
             new_user.save()
             # Setting-up email
             current_site = get_current_site(request)
@@ -144,7 +168,7 @@ def register(request):
             new_user.email_user(subject=subject, message=message)
             messages.success(request, 'Account creation was successful, confirm you email using the link send to '
                                       'activate.')
-            return redirect('store:all_products')
+            return redirect('store:index')
 
     return render(request, 'accounts/register.html')
 
@@ -156,7 +180,7 @@ def account_activate(request, uidb64, token):
         new_user.is_active = True
         new_user.save()
         login(request, new_user)
-        return redirect('accounts:dashboard')
+        return redirect('store:index')
     else:
         return render(request, 'accounts/activation_invalid.html')
 
@@ -167,10 +191,10 @@ def buyer_login(request):
         password = request.POST.get('pass')
 
         user = authenticate(request, username=uname, password=password)
-        if user is not None and user.is_student is False:
+        if user is not None and user.is_seller is False:
             login(request, user)
             messages.success(request, 'You have been successfully logged in')
-            return redirect('store:all_products')
+            return redirect('store:index')
         else:
             messages.error(request, 'Invalid username or password')
             return redirect('accounts:buyer_login-page')
@@ -184,10 +208,10 @@ def seller_login(request):
         password = request.POST.get('pass')
 
         user = authenticate(request, username=uname, password=password)
-        if user is not None and user.is_student is not False:
+        if user is not None and user.is_seller is not False:
             login(request, user)
             messages.success(request, 'You have been successfully logged in')
-            return redirect('store:all_products')
+            return redirect('store:index')
         else:
             messages.error(request, 'Invalid username or password')
             return redirect('accounts:seller_login-page')
@@ -197,4 +221,13 @@ def seller_login(request):
 
 def logoutuser(request):
     logout(request)
-    return redirect('store:all_products')
+    return redirect('store:index')
+
+
+def business_sells(request):
+    total_paid = 0
+    sold_items = OrderItem.objects.filter(product__created_by=request.user, order__billing_status=True)
+    for item in sold_items:
+        total_paid = item.quantity * item.price
+
+    return render(request, 'seller/account/sales.html', {'sold_items': sold_items, 'total_paid': total_paid})

@@ -65,7 +65,7 @@
             {% endfor %}
         <div class="col-12 text-end">
             <div class="h6 fw-bold">Total: Ksh.<div id="subtotal" class="d-inline-flex">{{basket.get_total_price}}</div></div>
-            <div class="h6 fw-bold"><a role="button" style="background-color: purple;color: white" href="#" class="btn fw-bold" type="button">Checkout</a></div>
+            <div class="h6 fw-bold"><a role="button" style="background-color: purple;color: white" href="{% url 'payment:pay' %}" class="btn fw-bold" type="button">Checkout</a></div>
         </div>
         {% endif %}
       </div>

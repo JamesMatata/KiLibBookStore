@@ -1,5 +1,5 @@
-from django.conf import settings
-from django.db import models
+# from django.conf import settings
+# from django.db import models
 
 from django.db import models
 from django.urls import reverse
@@ -34,8 +34,9 @@ class Product(models.Model):
     author = models.CharField(max_length=255, default='admin')
     description = models.TextField(blank=True)
     image = models.ImageField(upload_to='images/', default='book_files/default.png')
-    slug = models.SlugField(max_length=255)
+    slug = models.SlugField(max_length=255, unique=True)
     price = models.IntegerField()
+    book_lease_rates = models.IntegerField()
     in_stock = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     created = models.DateTimeField(auto_now_add=True)

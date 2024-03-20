@@ -7,9 +7,9 @@ from .managers import CustomUserManager
 
 
 class CustomUser(AbstractUser):
-    # is_admin=models.BooleanField('Is Admin',default=False)
-    is_student = models.BooleanField('student status', default=False)
-    is_teacher = models.BooleanField('teacher status', default=False)
+    is_admin = models.BooleanField('Is Admin', default=False)
+    is_seller = models.BooleanField('Seller status', default=False)
+    is_buyer = models.BooleanField('Buyer status', default=False)
     email = models.EmailField(_('email address'), unique=True)
 
     USERNAME_FIELD = 'email'
@@ -25,6 +25,7 @@ class Seller(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
     business_name = models.CharField(max_length=200, unique=False)
     business_email = models.CharField(max_length=200, unique=True)
+    business_address = models.CharField(max_length=200, unique=False)
 
     def __str__(self):
         return self.business_name

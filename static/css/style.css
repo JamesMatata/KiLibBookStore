@@ -108,6 +108,9 @@
 .basket-btn{
     position: relative;
 }
+.basket-btn{
+    position: relative;
+}
 /* Styling the payment form */
     .paymentDiv{
         width: 40%;
@@ -138,4 +141,36 @@
         margin: 5px;
         color: #006b1b;
     }
-/* --------------------------------*/
+/* -------------RECEIPT-------------------*/
+    .receipts_main_body{
+        width: 50%;
+        margin: 20px auto 50px;
+    }
+    .receipt{
+        color: black;
+        background-color: white;
+        width: 95%;
+        margin: auto auto 15px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+        padding: 3px 8px;
+        border-top: 1px solid black;
+
+    }
+    .order_table{
+        width: 100%;
+        background-color: purple;
+        border-spacing: 1px;
+    }
+     .order_table_headers{
+        padding: 6px 0;
+        background-color: purple;
+        color: white;
+         text-align: center;
+    }
+    .order_table_data{
+        padding: 4px 0;
+        text-align: center;
+        background-color: white;
+        font-size: 15px;
+        border: 1px solid purple;
+    }

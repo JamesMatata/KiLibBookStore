@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}B.Dashboard | KiLib{% endblock %}
 
 {% block web_content %}
 <main  class="pt-5">
@@ -24,7 +24,7 @@
 
                                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-1 g-3">
                                   <div class="col">
-                                    <a href="#" class="text-reset text-decoration-none" role="button" style="max-width: 540px;">
+                                    <a href="{% url "accounts:order" %}" class="text-reset text-decoration-none" role="button" style="max-width: 540px;">
                                       <div class="card"  style="border: 1px solid purple">
                                         <div class="row g-0">
                                           <div class="col-2 position-relative">
@@ -94,12 +94,12 @@
                                   </div>
 
                                     <div class="col">
-                                    <a href="#" class="text-reset text-decoration-none" role="button" style="max-width: 540px;">
+                                    <a href="{% url 'wallet:wallet_index' %}" class="text-reset text-decoration-none" role="button" style="max-width: 540px;">
                                       <div class="card"  style="border: 1px solid purple">
                                         <div class="row g-0">
                                           <div class="col-2 position-relative">
                                               <svg class="position-absolute top-50 start-50 translate-middle" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
-                                                  <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5z"/>
+                                                  <path d="M12.136.326A1.5 1.5 0 0 1 14 1.78V3h.5A1.5 1.5 0 0 1 16 4.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 13.5v-9a1.5 1.5 0 0 1 1.432-1.499zM5.562 3H13V1.78a.5.5 0 0 0-.621-.484zM1.5 4a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5z"></path>
                                               </svg>
                                           </div>
                                           <div class="col-10">
