@@ -96,16 +96,28 @@ def category_list(request, category_slug):
 def searched_items(request):
     if request.method == "POST":
         searched = request.POST['searchBar']
-        items = Product.objects.filter(title__contains=searched, is_active=True)
-        seller_searched_items = Product.objects.filter(title__contains=searched, is_active=True,
-                                                       created_by=request.user)
-        if items.exists():
-            return render(request, 'store/searched_items.html',
-                          {'searched': searched, 'items': items, 'seller_searched_items': seller_searched_items})
+        if len(searched) != 0:
+            if request.user.is_authenticated and request.user.is_buyer:
+                items = Product.objects.filter(title__contains=searched, is_active=True)
+                if items.exists():
+                    return render(request, 'store/searched_items.html',
+                                  {'searched': searched, 'items': items})
+                else:
+                    messages.success(request, "No books found")
+                    return HttpResponseRedirect(request.META["HTTP_REFERER"])
+            else:
+                seller_searched_items = Product.objects.filter(title__contains=searched, is_active=True,
+                                                               created_by=request.user)
+                if seller_searched_items.exists():
+                    return render(request, 'store/searched_items.html',
+                                  {'seller_searched_items': seller_searched_items})
+
+                else:
+                    messages.success(request, "No books found")
+                    return HttpResponseRedirect(request.META["HTTP_REFERER"])
         else:
-            messages.success(request, "No books found")
+            pass
         return HttpResponseRedirect(request.META["HTTP_REFERER"])
-    return render(request, 'Home-page/index.html')
 
 
 def delete_product(request, id):

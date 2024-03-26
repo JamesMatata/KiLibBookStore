@@ -34,21 +34,16 @@
                         <span style="font-size: 28px;color: black;font-weight: bold;text-shadow: 0 2px 2px purple;">KES</span>
                         <span style="font-size: 90px;color: purple;font-weight: bolder;text-align: center;text-shadow: 0 4px 4px black;">{{ balance }}</span>
                     </p>
+                    <p style="font-size: 20px;font-weight: bold">Usable balance: KES{{ usable_balance }}</p>
+                    <p style="font-size: 20px;font-weight: bold">Locked balance: KES{{ locked_balance }}</p>
                     <div style="width: 100%;">
                       <a href="{% url 'wallet:deposit' %}"><button class="walletButton">Deposit</button></a>
                       <a href="#"><button class="walletButton" style="float: right;">Withdraw</button></a>
                     </div>
                     
                 </div>
-                <h4>Transactions</h4>
-                <p style="text-align: right;font-size: 14px;color: rgb(121, 113, 113);display: block;">12/2/2024 1:20PM</p>
-                <p style="font-size: 15px;">
-                  <span style="color: purple;">#</span>
-                   Book-purchase::48-Laws-Of-Power::6Copies::Price9900::DeliveryPrice343::lastKING-bookstore
-                </p>
-                
-                <hr>
-                <p>Currently, you have not made any transactions</p>
+                  <hr>
+                  <p style="text-align: center">Have not confirmed deposit yet? <a href="{% url "wallet:confirm_deposit" %}">Confirm</a></p>
               </div>
             </div>
           </div>

@@ -142,7 +142,7 @@
         color: #006b1b;
     }
 /* -------------RECEIPT-------------------*/
-    .receipts_main_body{
+    .receipts_main_body,.receiptsToViewChoiceMainDiv{
         width: 50%;
         margin: 20px auto 50px;
     }

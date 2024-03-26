@@ -3,33 +3,55 @@
 {% block title %}Orders{% endblock %}
 
 {% block web_content %}
-    <div class="receipts_main_body">
-        <div>
-            {% if orders %}
-            {% for item in orders %}
+    <style>
+        .receiptsToViewChoiceDiv{
+            flex: 50%;
+            border: 4px solid purple;
+        }
+        .receiptsToViewChoiceDiv:hover{
+            border: 4px solid black;
+        }
+        .receiptsToViewChoiceDiv:active{
+            border: 4px solid black;
+        } 
+        .receiptsToViewChoiceDivP{
+           text-align: center;
+            padding: 5px;
+            font-weight: bold;
+            font-size: 30px;
+            margin: 0; 
+        }
+    </style>
+    <div class="receiptsToViewChoiceMainDiv" style="display: flex;width: 50%;margin: auto;border-bottom: 4px solid black;">
+        <div id="purchasesChoiceDiv" class="receiptsToViewChoiceDiv">
+            <p class="receiptsToViewChoiceDivP" id="PurchasesChoiceP">Purchases</p>
+        </div>
+        <div id="leasesChoiceDiv" class="receiptsToViewChoiceDiv">
+            <p class="receiptsToViewChoiceDivP" id="LeasesChoiceP">Leases</p>
+        </div>
+    </div>
+    <div class="receipts_main_body" id="purchasesDiv">
+            {% if purchases %}
+            {% for item in purchases %}
                 <p style="font-weight: bold;text-align: center;color: gray;">{{ item.created }}</p>
                 <div class="receipt">
                     <h3 style="text-align: center;margin: 4px 0;text-decoration: underline;">KiLib receipt</h3>
                     <table class="order_table">
                         <tr>
-                            <th class="order_table_headers">No.</th>
                             <th class="order_table_headers">Book</th>
                             <th class="order_table_headers">Quantity</th>
                             <th class="order_table_headers">Price</th>
                         </tr>
-                        {% for items in orderItems %}
-                        {% if items.order == item %}
-                            <tr>
-                                <td class="order_table_data">1</td>
-                                <td class="order_table_data">{{ items.product.title }}</td>
-                                <td class="order_table_data">{{ items.quantity }}</td>
-                                <td class="order_table_data">{{ items.price }}</td>
-                            </tr>
-                        {% else %}
-                        {% endif %}
-
+                        {% for items in purchasedItems %}
+                            {% if items.order == item %}
+                                <tr>
+                                    <td class="order_table_data">{{ items.product.title }}</td>
+                                    <td class="order_table_data">{{ items.quantity }}</td>
+                                    <td class="order_table_data">{{ items.price }}</td>
+                                </tr>
+                            {% else %}
+                            {% endif %}
                         {% endfor %}
-
                     </table>
                     <div style="display: flex;">
                         <div style="flex: 65%;">
@@ -48,34 +70,142 @@
                             <p style="text-align: right;font-weight: bold;font-size: 15px;margin: 0; margin-top: 5px;color: rgb(54, 51, 51);">Payment status: <span style="color: green">Paid</span></p>
                         </div>
                     </div>
-
                     <hr>
                     {% if item.billing_status is not True %}
                         <div>
-                            <form action="{% url 'payment:confirmPay' item.id %}" method="GET">
+                            <form action="{% url 'payment:confirmPurchase' item.id %}" method="GET">
                             <p style="color: red;text-align: center;margin: 4px 0;font-size: 15px;">Your payment is not confirmed yet! Please input your receipt number below to confirm</p>
                             <div style="display: flex;">
                                 <div style="flex: 85%;">
                                     <input class="receiptNumber" style="width: 96%;padding: 6px 0;padding-left: 10px;border: none;border-bottom: 2px solid purple;font-size: 15px;" type="text" placeholder="Receipt Number.. Eg. GDFFDXX45" name="receiptnumber">
                                 </div>
                                 <div style="flex: 15%;">
-                                    <a href="{% url 'payment:confirmPay' item.id %}">
+                                    <a href="{% url 'payment:confirmPurchase' item.id %}">
                                         <button style="width: 100%;padding: 7px 0;background-color: purple;border: none;color: white;border-radius: 4px;" type="submit">Submit</button>
                                     </a>
                                 </div>
                             </div>
+                                <hr>
+                                <p style="text-align: center">Pay with wallet instead.<a href="{% url 'wallet:purchase_with_wallet' item.id %}">Pay</a></p>
                             </form>
                         </div>
                     {% else %}
                         <p style="letter-spacing: 10px;text-align: center;color: green;margin: 6px 0;font-weight: bold;">#Delivery approved</p>
                     {% endif %}
-
                 </div>
-        </div>
         {% endfor %}
 
         {% else %}
             <p style="text-align: center; margin: 20px;font-size: 20px;font-weight: bold;">You have not made any order yet</p>
         {% endif %}
     </div>
+    
+    <div class="receipts_main_body" id="leasesDiv" style="display: none">
+           {% if leases %}
+            {% for item in leases %}
+                <p style="font-weight: bold;text-align: center;color: gray;">{{ item.created }}</p>
+                <div class="receipt">
+                    <h3 style="text-align: center;margin: 4px 0;text-decoration: underline;">KiLib receipt</h3>
+                    <table class="order_table">
+                        <tr>
+                            <th class="order_table_headers">Book</th>
+                            <th class="order_table_headers">Quantity</th>
+                            <th class="order_table_headers">Lease Rates/week</th>
+                        </tr>
+                        {% for items in leasedItems %}
+                            {% if items.Book_Lease == item %}
+                                <tr>
+                                    <td class="order_table_data">{{ items.product.title }}</td>
+                                    <td class="order_table_data">{{ items.quantity }}</td>
+                                    <td class="order_table_data">{{ items.product.book_lease_rates }}</td>
+                                </tr>
+                            {% else %}
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                    <div style="display: flex;">
+                        <div style="flex: 30%;">
+                            <p style="text-align: right;font-weight: bold;font-size: 15px;margin: 0; margin-top: 5px;color: rgb(54, 51, 51);">Delivery charges: <span style="font-size: 12px;color: black;">KES</span><span style="color: black">200</span></p>
+                            <p style="text-align: right;font-weight: bold;font-size: 15px;margin: 0; margin-top: 5px;color: rgb(54, 51, 51);">Total: <span style="font-size: 12px;color: black;">KES</span><span style="color: black">{{ item.total_paid }}</span></p>
+                        </div>
+                        <div style="flex: 30%;">
+                            <p style="text-align: right;font-weight: bold;font-size: 15px;margin: 5px 0 0;color: rgb(54, 51, 51);">Receipt No.:
+                                <span style="color: black">
+                                    {% if item.receipt_No %}
+                                        {{ item.receipt_No }}
+                                    {% else %}
+                                        N/L
+                                    {% endif %}
+                                </span></p>
+                            <p style="text-align: right;font-weight: bold;font-size: 15px;margin: 0; margin-top: 5px;color: rgb(54, 51, 51);">Payment status: <span style="color: green">Paid</span></p>
+                        </div>
+                        <div style="flex: 40%;">
+                            <p style="text-align: right;font-weight: bold;font-size: 15px;margin: 5px 0 0;color: rgb(54, 51, 51);">Return Date: <span style="color: black">{{ item.return_date }}</span></p>
+                            <p style="text-align: right;font-weight: bold;font-size: 15px;margin: 5px 0 0;color: rgb(54, 51, 51);">Return status: 
+                                {% if item.return_status is not True %}
+                                <span style="color: red">Not yet</span>
+                                {% else %}
+                                <span style="color: green">Returned</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                    <hr>
+                    {% if item.billing_status is not True %}
+                        <div>
+                            <form action="{% url 'payment:confirmLease' item.id %}" method="GET">
+                            <p style="color: red;text-align: center;margin: 4px 0;font-size: 15px;">Your payment is not confirmed yet! Please input your receipt number below to confirm</p>
+                            <div style="display: flex;">
+                                <div style="flex: 85%;">
+                                    <input class="receiptNumber" style="width: 96%;padding: 6px 0;padding-left: 10px;border: none;border-bottom: 2px solid purple;font-size: 15px;" type="text" placeholder="Receipt Number.. Eg. GDFFDXX45" name="receiptnumber">
+                                </div>
+                                <div style="flex: 15%;">
+                                    <a href="{% url 'payment:confirmLease' item.id %}">
+                                        <button style="width: 100%;padding: 7px 0;background-color: purple;border: none;color: white;border-radius: 4px;" type="submit">Submit</button>
+                                    </a>
+                                </div>
+                            </div>
+                                <hr>
+                                <p style="text-align: center">Pay with wallet instead.<a href="{% url 'wallet:lease_with_wallet' item.id %}">Pay</a></p>
+                            </form>
+                        </div>
+                    {% else %}
+                        <p style="letter-spacing: 10px;text-align: center;color: green;margin: 6px 0;font-weight: bold;">#Delivery approved</p>
+                    {% endif %}
+                </div>
+        {% endfor %}
+
+        {% else %}
+            <p style="text-align: center; margin: 20px;font-size: 20px;font-weight: bold;">You have not leased any books yet</p>
+        {% endif %}
+    </div>
+   <script>
+       const purchasesChoiceDiv = document.getElementById('purchasesChoiceDiv');
+       const leasesChoiceDiv = document.getElementById('leasesChoiceDiv');
+       const purchasesDiv = document.getElementById('purchasesDiv');
+       const leasesDiv = document.getElementById('leasesDiv');
+       const PurchasesChoiceP = document.getElementById('PurchasesChoiceP');
+       const LeasesChoiceP = document.getElementById('LeasesChoiceP');
+
+        purchasesChoiceDiv.addEventListener('click', function() {
+            purchasesDiv.style.display =  "block";
+            leasesDiv.style.display =  "none";
+            purchasesChoiceDiv.style.backgroundColor = "black";
+            purchasesChoiceDiv.style.border = "4px solid black";
+            PurchasesChoiceP.style.color = "white";
+            leasesChoiceDiv.style.backgroundColor = "white";
+            leasesChoiceDiv.style.border = "4px solid purple";
+            LeasesChoiceP.style.color = "black";
+        });
+        leasesChoiceDiv.addEventListener('click', function() {
+            purchasesDiv.style.display =  "none";
+            leasesDiv.style.display =  "block";
+            leasesChoiceDiv.style.backgroundColor = "black";
+            leasesChoiceDiv.style.border = "4px solid black";
+            LeasesChoiceP.style.color = "white";
+            purchasesChoiceDiv.style.backgroundColor = "white";
+            purchasesChoiceDiv.style.border = "4px solid purple";
+            PurchasesChoiceP.style.color = "black";
+        });
+    </script>
 {% endblock %}

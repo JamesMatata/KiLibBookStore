@@ -8,6 +8,7 @@ class Wallet(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='wallet_owner')
     balance = models.IntegerField(default=0)
     amount_locked = models.IntegerField(default=0)
+    usable_amount = models.IntegerField(default=0)
     updated_on = models.DateTimeField(auto_now=True)
 
     class Meta:

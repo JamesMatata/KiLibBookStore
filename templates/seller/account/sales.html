@@ -16,7 +16,7 @@
                         <p style="text-align: right;font-size: 14px;color: rgb(121, 113, 113);display: block;">{{ item.order.created }}</p>
                         <p style="font-size: 15px;">
                           <span style="color: purple;">#</span>
-                           Book-Sell::{{ item.order.user }}::{{ item.order.full_name }}::Name-{{ item.product.title }}::{{ item.quantity }}Copies::PriceKES{{ item.price }}::Total-PaidKES{{ total_paid }}
+                           Book-Sell::{{ item.order.user }}::{{ item.order.full_name }}::Name-{{ item.product.title }}::{{ item.quantity }}Copies::PriceKES{{ item.price }}::Total-PaidKES{{ total_paid }}::Delivery_status- {% if item.order.delivered is not True %} <span style="color: red;">Not yet</span> {% else %} <span style="color: green;">Delivered</span>{% endif %}
                         </p>
                       {% endfor %}
                   {% else %}

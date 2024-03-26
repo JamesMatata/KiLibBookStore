@@ -13,7 +13,7 @@ from validate_email import validate_email
 from accounts.forms import UserEditForm
 from accounts.models import Seller
 from accounts.token import account_activation_token
-from orders.models import Order, OrderItem
+from orders.models import Order, OrderItem, Book_Lease, LeasedItem
 from store.models import Product
 
 from django.contrib.auth import get_user_model
@@ -61,9 +61,12 @@ def wishlist(request):
 
 @login_required
 def orders(request):
-    orderss = Order.objects.filter(user=request.user)
-    orderItems = OrderItem.objects.all()
-    return render(request, 'accounts/dashboard/orders.html', {"orders": orderss, "orderItems": orderItems})
+    purchases = Order.objects.filter(user=request.user)
+    purchasedItems = OrderItem.objects.all()
+    leases = Book_Lease.objects.filter(user=request.user)
+    leasedItems = LeasedItem.objects.all()
+    return render(request, 'accounts/dashboard/orders.html', {"purchases": purchases, "purchasedItems": purchasedItems,
+                                                              "leases": leases, "leasedItems": leasedItems})
 
 
 @login_required
@@ -231,3 +234,12 @@ def business_sells(request):
         total_paid = item.quantity * item.price
 
     return render(request, 'seller/account/sales.html', {'sold_items': sold_items, 'total_paid': total_paid})
+
+
+def business_leases(request):
+    total_paid = 0
+    leased_items = LeasedItem.objects.filter(product__created_by=request.user, Book_Lease__billing_status=True)
+    for item in leased_items:
+        total_paid = item.quantity * item.lease_rate
+
+    return render(request, 'seller/account/leases.html', {'leased_items': leased_items, 'total_paid': total_paid})

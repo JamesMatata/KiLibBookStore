@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Lease Denied{% endblock %}
+{% block web_content %}
+
+<div class="container-fluid">
+  <div class="row no-gutter">
+    <div class="col-md-12">
+      <div class="login d-flex align-items-center py-5">
+        <div class="container">
+          <div class="row">
+              <div class="formsDiv" style="padding: 20px;background-color: white;">
+                <h1 class="formTitle">Payment Failed</h1>
+                <hr>
+                <p class="formInstructions" style="color: red">Your balance is low to complete this transaction.</p>
+                <hr>
+                <p style="text-align: center;">Want to deposit to wallet? <a href="{% url 'wallet:deposit' %}">deposit</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
