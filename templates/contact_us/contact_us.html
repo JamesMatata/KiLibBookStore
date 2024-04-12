@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Contact{% endblock %}
+{% block web_content %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css" integrity="sha384-BY+fdrpOd3gfeRvTSMT+VUZmA728cfF9Z2G42xpaRkUGu2i3DyzpTURDo5A6CaLK" crossorigin="anonymous">
+    <style>
+        #email,#name,#subject,#message{
+            border: 1px solid purple;
+        }
+        .messageSubmitButton{
+            background-color: purple;
+            color: white;
+            padding: 10px 45px;
+            border: 0;
+            border-radius: 3px;
+            margin-top: 10px;
+        }
+
+    </style>
+
+    <div class="container" style="margin-bottom: 200px">
+        <div class="row no-gutter">
+            {% if messages %}
+            <div style="margin-top: 30px" class="alert alert-primary" alert="{{ message.tags }}" role="alert">
+                {% for message in messages %}
+                   <p style="text-align: center">{{message}}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+            <div class="col-md-12">
+                <h2 class="h1-responsive font-weight-bold text-center my-4">Contact us</h2>
+                <p class="text-center w-responsive mx-auto mb-5">Do you have any questions or suggestions? Please do not hesitate to contact us directly.<br> Our team will come back to you within
+                        a matter of hours to help you.</p>
+                <hr>
+                <div class="row">
+                    <div class="col-md-9 mb-md-0 mb-5">
+                        <form id="contact-form" name="contact-form" action="" method="POST">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="md-form mb-0">
+                                        <label for="name" class="">Your name</label>
+                                        <input type="text" id="name" name="name" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="md-form mb-0">
+                                        <label for="email" class="">Your email</label>
+                                        <input type="text" id="email" name="email" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="md-form mb-0">
+                                        <label for="subject" class="">Subject</label>
+                                        <input type="text" id="subject" name="subject" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <div class="md-form">
+                                        <label for="message">Your message</label>
+                                        <textarea type="text" id="message" name="message" rows="2" class="form-control md-textarea"></textarea>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="text-center text-md-left">
+                            <a onclick="document.getElementById('contact-form').submit();"><button class="messageSubmitButton">Send</button> </a>
+                        </div>
+                        <div class="status"></div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <div>
+                                    <img style="height: 50px" src="/media/web_files/loctionIcon.png" alt="">
+                                </div>
+                                <p style="font-weight: 500;font-size: 18px">Nairobi, CA 94126, Kenya</p>
+                            </li>
+
+                            <li>
+                                <div>
+                                    <img style="height: 50px" src="/media/web_files/callIcon.png" alt="">
+                                </div>
+                                <p style="font-weight: 500;font-size: 18px">+254 723536722</p>
+                            </li>
+
+                            <li>
+                                <div>
+                                    <img style="height: 50px" src="/media/web_files/mailIcon.png" alt="">
+                                </div>
+                                <p style="font-weight: 500;font-size: 18px">customerservice@kilib.com</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}AddProducts | KiLib{% endblock %}
+{% block web_content %}
+<style>
+    .account-form, input
+      {
+      border: 2px solid rgba(128, 0, 128, 0.56);
+      height: calc(2em + .75rem + 2px);
+      }
+  
+    .form-control {
+      border: 2px solid rgba(128, 0, 128, 0.56);
+    }
+  
+    .account-form input:focus {
+      border-color: purple;
+      box-shadow: inset 0 0 0 rgba(0, 0, 0, 0.075), 0 0 0 rgba(255, 0, 0, 0.6);
+    }
+    #payInput{
+        border-radius: 0;
+        border: none;
+        border-bottom: 2px solid green;
+        margin-top: 10px;
+    }
+</style>
+  
+  <div class="container-fluid">
+    <div class="row no-gutter">
+      <div class="col-md-12">
+        <div class="login d-flex align-items-center py-5">
+          <div class="container">
+            <div class="row">
+              <div id="payment-form" class="col-12 col-lg-7 mx-auto">
+                <h2 class="mb-3" style="text-align: center;color: purple">EDIT PRODUCT DETAILS</h2>
+                  <hr>
+                <div id="card-errors" class="a" role="alert"></div>
+                <form action="" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <label for="bookName" class="form-label">Book Name</label>
+                      <input type="text" class="form-control" id="bookName" value="{{ product.title }}" required name="bookName">
+                    </div>
+                    <div class="row g-1">
+                        <div class="col-md-4">
+                            <label for="bookCategory" class="form-label">Book category</label>
+                            <select class="form-select" id="bookCategory" name="bookCategory" value="{{ product.category }}">
+                                {% for c in categories %}
+                                <option value="{{ c.name }}">{{ c.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-8">
+                            <label for="productImage" class="form-label">Product image</label>
+                            <input type="file" src="{{ product.image.url }}" class="form-control" id="productImage" name="productImage" accept=".jpg,.jpeg,.png">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                      <label for="author" class="form-label">Author(s) name(s)</label>
+                      <input type="text" class="form-control" id="author" value="{{ product.author }}" name="author">
+                    </div>
+                    <div class="col-12">
+                      <label for="description" class="form-label">Description</label>
+                      <textarea type="text" class="form-control" id="description" required name="description">{{ product.description }}</textarea>
+                    </div>
+                    <div class="row g-1">
+                      <div class="col-6">
+                          <label for="bookPrice" class="form-label">Price</label>
+                          <input type="number" class="form-control" id="bookPrice" name="bookPrice" value="{{ product.price }}">
+                      </div>
+                      <div class="col-6">
+                        <label for="bookLeaseRates" class="form-label">Lease-rates(per week)</label>
+                        <input type="number" class="form-control" id="bookLeaseRates" name="bookLeaseRates" value="{{ product.book_lease_rates }}">
+                    </div>
+                  </div>
+                    
+                    <div class="row g-1">
+                        <div class="col-4">
+                            <label style="vertical-align: middle;margin: 5px;" for="bookInStock">In-stock</label>
+                            <input type="checkbox" style="vertical-align: middle;margin: 5px;" id="bookInStock" name="bookInStock">
+                        </div>
+                        <div class="col-4">
+                            <label style="vertical-align: middle;margin: 5px;" for="bookIsActive" >Is-active</label>
+                            <input type="checkbox" style="vertical-align: middle;margin: 5px;" id="bookIsActive" name="bookIsActive">
+                        </div>
+                    </div>
+                  </div>
+                  
+ 
+                  <button type="submit" class="btn btn-primary w-100 fw-bold" style="background-color: purple;border: none;">Save changes</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

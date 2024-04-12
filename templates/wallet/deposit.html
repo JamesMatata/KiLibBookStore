@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Deposit{% endblock %}
+{% block web_content %}
+    <style>
+    body{
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    .formsDiv{
+        width: 35%;
+        background-color: white;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.49);
+        padding: 10px 10px;
+        margin: 20px auto 200px;
+    }
+    .formTitle{
+        text-align: center;
+        color: purple;
+    }
+    .formInstructions{
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        color: black;
+    }
+    label{
+        font-size: 15px;
+        margin-left: 5px;
+        color: rgb(130, 134, 138);
+    }
+    .form-control{
+        width: 95%;
+        padding: 10px 10px;
+        border: none;
+        border-bottom: 2px solid purple;
+        font-size: 16px;
+        text-align: center;
+        margin-bottom: 5px;
+        box-shadow: 0 0 2px black;
+    }
+    #submit{
+        width: 100%;
+        background-color: green;
+        color: white;
+        padding: 10px 0;
+        font-size: 16px;
+        border-radius: 4px;
+        
+    }
+    
+</style>
+    
+    <div class="formsDiv">
+        <h1 class="formTitle">Payment</h1>
+        <hr>
+        {% if messages %}
+            <ul class="messages" style="list-style: none">
+                {% for message in messages %}
+                <li{% if message.tags %} style="text-align: center;color: blue;" class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <p class="formInstructions">
+            To deposit cash to your wallet through M-pesa provide your number and the amount to deposit
+        </p>
+        <div style="width: 90%;margin: auto;">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div>
+                    <input class="form-control" id="numberInput" type="tel" placeholder="Enter your number" name="phone_number"/>
+                </div>
+                <div>
+                    <input class="form-control" id="amountInput" type="number" placeholder="Enter Amount" name="amount"/>
+                </div>
+                <hr class="my-4">
+                <button id="submit" type="submit" class="btn btn-primary w-100 fw-bold" style="background-color: green;border: none">Pay</button>
+            </form>
+        </div> 
+        <hr>
+        <p style="text-align: center;">
+            Already deposited? <a href="{% url 'wallet:confirm_deposit' %}">Confirm</a>
+        </p>
+    </div>
+{% endblock %}

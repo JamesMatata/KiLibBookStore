@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Lease Denied{% endblock %}
+{% block web_content %}
+
+<div class="container-fluid">
+  <div class="row no-gutter">
+    <div class="col-md-12">
+      <div class="login d-flex align-items-center py-5">
+        <div class="container">
+          <div class="row">
+              <div class="formsDiv" style="padding: 20px;background-color: white;">
+                <h1 class="formTitle">Book Lease Denied</h1>
+                <hr>
+                <p class="formInstructions">For you to lease books your wallet balance must be equal or more than KES{{ purchase_costs }} which is the purchase cost of the books</p>
+                <a href="#"><p style="text-align: center;">Read terms and conditions for leasing books</p></a>
+                <hr>
+                <p style="text-align: center;">Want to deposit to wallet? <a href="#">deposit</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
