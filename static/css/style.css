@@ -1,0 +1,214 @@
+@media screen and (max-width: 576px){
+    footer p {
+        text-align: center;
+    }
+    footer h5 {
+        text-align: center;
+        font-size: 20px;
+    }
+    footer ul li{
+        text-align: center;
+    }
+}
+/* Small devices (landscape phones, 544px and up) */
+@media screen and (min-width: 576px) {
+
+}
+
+/* Medium devices (tablets, 768px and up) The navbar toggle appears at this breakpoint */
+@media screen and (min-width: 768px) {
+
+}
+
+/* Large devices (desktops, 992px and up) */
+@media screen and (min-width: 992px) {
+
+}
+
+.navButtons, .homeButton, .submitbutton{
+    margin-top: 10px;
+    background-color: purple;
+    padding: 8px 13px;
+    border: none;
+    border-radius: 3px;
+    transition: background-color 0.15s;
+    color: white;
+}
+.homeButton{
+    text-decoration: none;
+}
+.navButtons:hover{
+    background-color: black;
+}
+.navButtons a{
+    color: white;
+    text-decoration: none;
+}
+.navbar-nav li{
+    padding: 0 13px;
+}
+.nav-link{
+    border-bottom: 2px solid white;
+    transition: border-bottom-color 0.2s;
+}
+.nav-link:hover{
+     border-bottom: 2px solid purple;
+}
+.footerlist{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.footerlist a{
+    text-decoration: none;
+    color: purple;
+}
+#newslettersubscriptionemail{
+    padding: 8px 13px;
+}
+.newslettersubscription{
+    font-size: 17px;
+}
+
+.formsDiv{
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    padding: 10px 10px;
+}
+.formTitle{
+    text-align: center;
+    color: purple;
+}
+.formInstructions{
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: black
+}
+.inputs, #id_new_password1, #id_new_password2,#id_old_password{
+    width: 100%;
+    padding: 5px 5px;
+    margin-bottom: 5px;
+    border: 1px solid rgba(128, 0, 128, 0.56);
+}
+.formButton{
+    width: 100%;
+    margin-top: 5px;
+    padding: 10px 0;
+    background-color: purple;
+    color: white;
+    border: none;
+    border-radius: 3px;
+}
+.pResetDiv{
+    width: 100%;
+    background-color: white;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.47);
+    padding: 10px 10px;
+    margin: 20px auto 300px;
+}
+#id_email{
+    width: 100%;
+    padding: 5px 5px;
+    margin-bottom: 5px;
+}
+.basket-qty{
+    color: #fff;
+    background: #d42114;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 11px;
+    height: 15px;
+    width: 14px;
+    position: absolute;
+    box-sizing: content-box;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 1px;
+    right: 10px;
+}
+
+.basket-btn{
+    position: relative;
+}
+.basket-btn{
+    position: relative;
+}
+/* Styling the payment form */
+    .paymentDiv{
+        width: 40%;
+        background-color: white;
+        box-shadow: 0 1px 4px black;
+        padding: 10px 10px;
+        margin: auto
+    }
+    .payInputs{
+        width: 97%;
+        margin-top: 10px;
+        padding: 7px 5px;
+        border: 1px solid green;
+    }
+    .payButton{
+        width: 100%;
+        margin-top: 10px;
+        padding: 8px 0;
+        background-color: green;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 2px;
+    }
+    .payh2{
+        text-align: center;
+        margin: 5px;
+        color: #006b1b;
+    }
+/* -------------RECEIPT-------------------*/
+    .receipt{
+        color: black;
+        background-color: white;
+        width: 95%;
+        margin: auto auto 15px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+        padding: 3px 8px;
+        border-top: 1px solid black;
+
+    }
+    .order_table{
+        width: 100%;
+        background-color: purple;
+        border-spacing: 1px;
+    }
+     .order_table_headers{
+        padding: 6px 0;
+        background-color: purple;
+        color: white;
+         text-align: center;
+    }
+    .order_table_data{
+        padding: 4px 0;
+        text-align: center;
+        background-color: white;
+        font-size: 15px;
+        border: 1px solid purple;
+    }
+    .receiptsToViewChoiceDiv{
+        flex: 50%;
+        border: 1px solid purple;
+    }
+    .receiptsToViewChoiceDiv:hover, .receiptsToViewChoiceDiv:active{
+        border: 1px solid black;
+    }
+    .receiptsToViewChoiceDivP{
+       text-align: center;
+        padding: 5px;
+        font-weight: bold;
+        font-size: 18px;
+        margin: 0;
+    }

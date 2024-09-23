@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block web_content %}
+    <style>
+        fieldset {
+            border: 1px solid #999;
+            padding: 6px;
+            margin-bottom: 20px;
+        }
+
+        legend {
+            color: rgb(85, 81, 81);
+            font-size: 15px;
+        }
+    </style>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-primary" alert="{{ message.tags }}" role="alert">
+                <p style="text-align: center;">{{ message }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="col col-11 colo-xs-6 col-sm-6 col-md-3 col-lg-3 col-xl-3" style="margin: 20px auto 200px;">
+        <div class="formsDiv">
+            <div style="display: flex;justify-content: center;">
+                <img style="align-self: center;width: 40%" src="/media/web_files/logo.png" alt="">
+            </div>
+            <h2 class="formTitle">Sign-Up</h2>
+            <hr>
+            <p class="formInstructions">Fill the form below to sign up</p>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <label for="fname"></label>
+                <input class="inputs" id="fname" type="text" placeholder="Enter your first name" name="fname"/><br>
+                <label for="sname"></label>
+                <input class="inputs" id="sname" type="text" placeholder="Enter your last name" name="sname"/><br>
+                <label for="uname"></label>
+                <input class="inputs" id="uname" type="text" placeholder="Create a username" name="uname"/><br>
+                <label for="email"></label>
+                <input class="inputs" id="email" type="email" placeholder="Enter your email" name="email"/><br>
+                <div style="width: 95%;margin: auto;">
+                    <label style="color: rgb(85, 81, 81);font-size: 14px;" for="user"
+                           class="form-label">UserType:</label>
+                    <select class="inputs" id="user" name="user" required onchange="toggleDiv(this.value)">
+                        <option value="">Choose...</option>
+                        <option value="Buyer">Buyer</option>
+                        <option value="Seller">Seller</option>
+                    </select>
+                </div>
+                <div style="width: 80%;margin: auto auto 5px;display: none;" id="sellerOptionExtraDetails">
+                    <fieldset>
+                        <legend>Business details</legend>
+                        <label for="business_name">Business Name</label>
+                        <input class="inputs" id="business_name" type="text" placeholder="Enter your business name"
+                               name="business_name"/>
+
+                        <label for="business_email">Business Email</label>
+                        <input class="inputs" id="business_email" type="email" placeholder="Enter business email"
+                               name="business_email"/>
+
+                        <label for="business_address">Business Address</label>
+                        <input class="inputs" id="business_address" type="text" placeholder="Enter business address"
+                               name="business_address"/>
+                    </fieldset>
+                </div>
+                <label for="pass"></label>
+                <input id="pass" class="inputs" style="margin-top: 5px" type="password" placeholder="Create a password"
+                       name="pass"/>
+                <label for="pass2"></label>
+                <input class="inputs" id="pass2" type="password" placeholder="Confirm password" name="pass2"/><br>
+
+                <button type="submit" class="formButton">Register</button>
+                <p style="text-align: center;font-size: 14px">
+                    Already have an account?login <a href="{% url 'accounts:buyer_login-page' %}" style="text-decoration: none;color: red">buyer</a> | <a href="{% url 'accounts:seller_login-page' %}" style="text-decoration: none;color: red">seller</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleDiv(value) {
+            const sellerOptionExtraDetails = document.getElementById('sellerOptionExtraDetails');
+            sellerOptionExtraDetails.style.display = value === "Seller" ? "inline" : "none";
+        }
+    </script>
+{% endblock %}

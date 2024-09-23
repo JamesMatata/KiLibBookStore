@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Home | KiLib{% endblock %}
+{% block web_content %}
+    
+{% if user.is_authenticated and user.is_seller is not False %}
+    <style>
+        body{
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: beige;
+        }
+    </style>
+    <main style="margin-top: 0">
+        <div class="album py-5 bg-light">
+            <div class="container">
+                <div class="row g-3">
+                    <div class="col col-6 pb-3 h5" style="display: inline">ALL POSTED BOOKS</div>
+                    <div class="col col-6"><a href="{% url 'store:add_product' %}"><button style="float: right;background-color: purple;border: none;border-radius: 3px;color: white;font-size: 15px;padding: 10px 15px;">Add a book</button></a></div>
+                </div>
+                {% if not posted_products %}
+                    <div class="row g-3">
+                        <div class="col-12" style="margin-bottom: 200px">There are currently no posted products</div>
+                    </div>
+                {% else %}
+                    <div class="row g-3">
+                        {% for item in posted_products %}
+                            <div class="col col-6 colo-xs-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
+                                <div class="card shadow-sm">
+                                    <div style="border-radius: 2px">
+                                        <img  style="object-fit: contain;border-radius: 5px;height: 250px;width: 100%" alt="Responsive image" src="{{ item.image.url }}">
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text" style="line-height: 20px;max-height: 20px;overflow: hidden;margin-bottom: 8px">
+                                            <a class="text-dark text-decoration-none" href="{{ item.get_absolute_url}}">{{ item.title }}</a>
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted" style="line-height: 20px;max-height: 20px;overflow: hidden">Ksh.{{ item.price }}</small>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <p>Status: 
+                                                {% if item.in_stock is not False %}
+                                                    <span style="color: green;">Available</span>
+                                                {% else %}
+                                                    <span style="color: red">Out-of-stock</span>
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                   </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+{% else %}
+    <div style="background-image: url('/media/web_files/homepage.jpg');height: 75vh;background-repeat: no-repeat;background-size: cover">
+        <section class="py-5 text-center container">
+            <main>
+                {% if messages %}
+                    <div class="alert alert-primary" alert="{{ message.tags }}" role="alert">
+                        {% for message in messages %}
+                            {{message}}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="row py-lg-5">
+                    <div class="col-lg-6 col-md-8 mx-auto" style="background-color: rgba(255,255,255,0.56);padding: 20px 0;box-shadow: 0 1px 4px rgba(0,0,0,0.62)">
+                        <h1 class="h1 fw-bold">Find your Loyal Friend</h1>
+                        <p class="lead text-muted">Shop for quality and affordable books online and get them delivered within a day.</p>
+                        <p>
+                          {% if request.user.is_authenticated %}
+                          {% else %}
+                          <a href="{% url 'accounts:register-page' %}" class="homeButton">Register</a>
+                          {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </main>
+        </section>
+    </div>
+    
+    <main style="margin-top: 0">
+      <div class="album py-5 bg-light">
+        <div class="container">
+            <div class="pb-3 h5">All Books</div>
+            <div class="row g-3">
+                  {% if not products %}
+                      <div class="col col-12" style="margin-bottom: 200px">There are currently no products active</div>
+                  {% else %}
+                      <div class="row g-3">
+                          {% for item in products %}
+                              <div id="productCol" class="col col-6 colo-xs-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
+                                  <div class="card shadow-sm">
+                                      <div style="border-radius: 2px">
+                                          <img  style="object-fit: contain;border-radius: 5px;height: 250px;width: 100%" alt="Responsive image" src="{{ item.image.url }}">
+                                      </div>
+                                      <div class="card-body">
+                                          <p class="card-text" style="line-height: 20px;max-height: 20px;overflow: hidden">
+                                              <a class="text-dark text-decoration-none" href="{{ item.get_absolute_url }}">{{ item.title }}</a>
+                                          </p>
+                                          <div class="d-flex justify-content-between align-items-center">
+                                              <small class="text-muted" style="line-height: 20px;max-height: 20px;overflow: hidden">Ksh.{{ item.price }}</small>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          {% endfor %}
+                      </div>
+                  {% endif %}
+              </div>
+        </div>
+      </div>
+    </main>
+{% endif %}
+
+{% endblock %}

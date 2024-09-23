@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Deposit | KiLib {% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/wallet.css' %}">
+{% endblock %}
+
+{% block web_content %}
+    <div class="row">
+        <div class="col col-11 colo-xs-6 col-sm-6 col-md-4 col-lg-3 col-xl-3 wallet-forms">
+            <h1 class="wallet-form-titles">Payment</h1>
+            <hr>
+            {% if messages %}
+                <ul class="messages" style="list-style: none">
+                    {% for message in messages %}
+                        <li{% if message.tags %} style="text-align: center;color: blue;"
+                                                 class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            <p class="formInstructions">
+                To deposit cash to your wallet through M-Pesa provide your number and the amount to deposit
+            </p>
+            <div class="deposit-form">
+                <form action="" method="POST">
+                    {% csrf_token %}
+                        <label for="numberInput"></label>
+                        <input class="wallet-inputs" id="numberInput" type="tel" placeholder="Enter your number" name="phone_number"/>
+                        <label for="amountInput"></label>
+                        <input class="wallet-inputs" id="amountInput" type="number" placeholder="Enter Amount" name="amount"/>
+                    <hr>
+                    <button class="wallet-buttons" type="submit">Deposit</button>
+                </form>
+            </div>
+            <hr>
+            <p style="text-align: center;">
+                Already deposited? <a href="{% url 'wallet:confirm_deposit' %}">Confirm</a>
+            </p>
+        </div>
+    </div>
+
+{% endblock %}

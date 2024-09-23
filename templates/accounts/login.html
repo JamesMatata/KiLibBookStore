@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Log In{% endblock %}
+
+{% block web_content %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-primary" alert="{{ message.tags }}" role="alert">
+                <p style="text-align: center;">{{ message }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="col col-11 colo-xs-6 col-sm-6 col-md-3 col-lg-3 col-xl-3" style="margin: 20px auto 200px;">
+        <div class="formsDiv">
+            <div style="display: flex;justify-content: center;">
+                <img style="align-self: center;width: 40%" src="/media/web_files/logo.png" alt="">
+            </div>
+            <h1 class="formTitle">Log-In</h1>
+            <hr>
+            <p class="formInstructions">
+                Please, login using your username and password
+            </p>
+            <div>
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <label class="labels" for="uname">Username:</label>
+                    <input class="inputs" id="uname" type="text" placeholder="Enter your username" name="uname"><br>
+                    <label class="labels" for="pass">Password:</label>
+                    <input class="inputs" id="pass" type="password" placeholder="Enter your password" name="pass"><br>
+
+                    <button type="submit" class="formButton">Log In</button>
+                </form>
+                <p style="text-align: right;font-size: 14px;">
+                    <a href="{% url 'accounts:password_reset' %}" style="text-decoration: none;color: red">
+                        #Forgotten your password?
+                    </a>
+                </p>
+                <hr>
+                <p style="text-align: center;font-size: 14px">
+                    Not a member? <a href="{% url 'accounts:register-page' %}" style="text-decoration: none;color: red">Register
+                    here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

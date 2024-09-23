@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Confirm D | KiLib {% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/wallet.css' %}">
+{% endblock %}
+
+{% block web_content %}
+    <div class="col col-11 colo-xs-6 col-sm-6 col-md-4 col-lg-3 col-xl-3 wallet-forms">
+        <h1 class="wallet-form-titles">Confirm Deposit</h1>
+        <hr>
+        <p class="formInstructions">
+            To confirm your deposit please enter the receipt number below
+        </p>
+        <div style="width: 90%;margin: auto;">
+            <form action="{% url 'wallet:confirm_deposit' %}" method="POST">
+                {% csrf_token %}
+                <div>
+                    <label for="receiptNo"></label>
+                    <input class="wallet-inputs" id="receiptNo" type="text" placeholder="Enter receipt No." name="receiptNo"/>
+                </div>
+                <hr>
+                <a href="{% url 'wallet:confirm_deposit' %}">
+                    <button id="confirm" type="submit" class="wallet-buttons">Confirm</button>
+                </a>
+            </form>
+        </div> 
+        <hr>
+        <p style="text-align: center;">
+            You have not deposited? <a href="{% url 'wallet:deposit' %}">Deposit</a>
+        </p> 
+    </div>
+{% endblock %}

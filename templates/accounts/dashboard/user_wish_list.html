@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Users Wish List{% endblock %}
+
+{% block web_content %}
+    <main class="pt-3">
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-7" style="margin: auto">
+                <h1 style="font-size: 22px;font-weight: bold">My Wishlist</h1>
+                <hr/>
+                <div class="container">
+                    {% if wishlist %}
+
+                        {% for product in wishlist %}
+                            <div class="card mb-3 rounded-0">
+                                <div class="row g-0">
+                                    <div class="col-md-2">
+                                        <img class="img-fluid d-block p-2" width="135px" src="{{ product.image.url }}"
+                                             alt=""/>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <div class="card-body">
+                                            <div style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
+                                                <h5 class="card-title">{{ product.title }}</h5>
+                                                <div style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
+                                                    <p style="margin: 0;font-size: 14px;">Price:
+                                                        Ksh.{{ product.price }}</p>
+                                                    <p style="margin: 0;font-size: 14px;">Lease rates:
+                                                        Ksh.{{ product.book_lease_rates }}/week</p>
+                                                </div>
+                                            </div>
+
+
+                                            <p class="card-text">{{ product.description|slice:150 }}{% if product.description.length < 150 %}{% else %}...{% endif %}</p>
+
+                                            <button type="button" style="background-color: purple;color: white" id="add-button" value="{{ product.id }}" class="btn fw500">Add to
+                                        basket
+                                    </button>
+                                            <a type="button"
+                                               style="padding: 7px 10px;background: red;text-decoration: none;color: white;border-radius: 3px;"
+                                               class="remove-form-wishlist-button" id="remove-form-wishlist-button"
+                                               href="{% url 'accounts:user_wishlist' product.id %}">Remove from
+                                                Wishlist</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="card-text" style="margin-bottom: 400px">No products have been added to your wishlist
+                            yet</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+     $(document).on('click', '#add-button', function (e) {
+         e.preventDefault();
+         const removeFormWishlistButton = document.getElementById('remove-form-wishlist-button')
+         const quantity = $('#quantity').val();
+         $.ajax({
+             type: 'POST',
+             url: '{% url "basket:basket_add" %}',
+             data: {
+                 productid: $('#add-button').val(),
+                 productqty: quantity,
+                 csrfmiddlewaretoken: '{{ csrf_token }}',
+                 action: 'post'
+             },
+             success: function (json) {
+                 document.getElementById("basket-qty").innerHTML = json.qty;
+                 removeFormWishlistButton.click()
+             },
+             error: function(xhr, errmsg, err) {
+                 console.log(xhr.status + ": " + xhr.responseText);
+             }
+         });
+     });
+</script>
+{% endblock %}

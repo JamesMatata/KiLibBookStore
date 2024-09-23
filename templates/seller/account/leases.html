@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Leases | KiLib{% endblock %}
+{% block web_content %}
+    <div class="container-fluid">
+    <div class="row no-gutter">
+      <div class="col-md-12">
+        <div class="login d-flex align-items-center py-5">
+          <div class="container">
+            <div class="row">
+              <div id="payment-form" class="col-12 col-lg-9 mx-auto">
+                <h2 class="mb-3" style="text-align: center;color: purple">Leases</h2>
+                  <hr>
+                  {% if leased_items %}
+                      {% for item in leased_items %}
+                        <p style="text-align: right;font-size: 14px;color: rgb(121, 113, 113);display: block;">{{ item.Book_Lease.created }}</p>
+                        <p style="font-size: 15px;">
+                          <span style="color: purple;">#</span>
+                           Book-Sell::{{ item.Book_Lease.user }}::{{ item.Book_Lease.full_name }}::Name-{{ item.product.title }}::{{ item.quantity }}Copies::PriceKES{{ item.price }}::Total-PaidKES{{ total_paid }}::Delivery_status- {% if item.Book_Lease.delivered is not True %} <span style="color: red;">Not yet</span> {% else %} <span style="color: green;">Delivered</span>::return_date-<span style="color: green">{{ item.Book_Lease.return_date }}</span>{% endif %}
+                        </p>
+                      {% endfor %}
+                  {% else %}
+                <p style="margin-bottom: 400px;text-align: center;">Currently, you have not made any leases yet</p>
+                  {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

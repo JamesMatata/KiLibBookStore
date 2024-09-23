@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Lease Books{% endblock %}
+{% block web_content %}
+<style>
+  .account-form, input
+    {
+    border: 2px solid rgba(128, 0, 128, 0.56);
+    height: calc(2em + .75rem + 2px);
+    }
+
+  .form-control {
+    border: 2px solid rgba(128, 0, 128, 0.56);
+  }
+
+  .account-form input:focus {
+    border-color: purple;
+    box-shadow: inset 0 0 0 rgba(0, 0, 0, 0.075), 0 0 0 rgba(255, 0, 0, 0.6);
+  }
+  #payInput{
+      border-radius: 0;
+      border: none;
+      border-bottom: 2px solid green;
+      margin-top: 10px;
+  }
+</style>
+
+<div class="container-fluid">
+  <div class="row no-gutter">
+    <div class="col-md-12">
+      <div class="login d-flex align-items-center py-5">
+        <div class="container">
+          <div class="row">
+              {% if messages %}
+                <div class="alert alert-success" alert="{{ message.tags }}" role="alert">
+                    {% for message in messages %}
+                        {{message}}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div id="payment-form" class="col-12 col-lg-6 mx-auto">
+              <h2 class="mb-3" style="text-align: center;color: purple">BOOK LEASE FORM</h2>
+                <hr>
+                <h6 style="text-align: center">Fill the form below to lease books</h6>
+              <div id="card-errors" class="a" role="alert"></div>
+              <form action="" method="post">
+                  {% csrf_token %}
+                <div class="row g-3">
+                  <div class="col-12">
+                    <label for="firstName" class="form-label">Customer Name</label>
+                    <input type="text" class="form-control" id="custName" placeholder="James Matata" required name="full_name">
+                  </div>
+                  <div class="col-12">
+                    <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
+                    <input type="email" class="form-control" id="email" placeholder="you@example.com" name="email">
+                  </div>
+                  <div class="col-12">
+                    <label for="address" class="form-label">Delivery-Point</label>
+                    <input type="text" class="form-control" id="custAdd" placeholder="Nairobi CBD" required name="dp1">
+                  </div>
+                  <div class="col-12">
+                    <label for="address2" class="form-label">Delivery-Point 2 <span
+                        class="text-muted">(Optional)</span></label>
+                    <input type="text" class="form-control" id="custAdd2" placeholder="Institution or Apartment"  name="dp2">
+                  </div>
+                <div class="col-12">
+                    <label for="weekNo" class="form-label">Number of week:</label>
+                    <input type="number" class="form-control" id="weekNo" placeholder="4" required name="weekNo">
+                  </div>
+                  <div class="col-md-4">
+                    <label for="county" class="form-label">County</label>
+                    <select class="form-select" id="county" name="county" required>
+                        <option value="">Choose...</option>
+                        <option value="Nairobi">Nairobi</option>
+                        <option value="Machakos" >Machakos</option>
+                        <option value="Mombasa">Mombasa</option>
+                        <option value="Kiambu">Kiambu</option>
+                    </select>
+                  </div>
+                    <div class="col-md-4">
+                    <label for="payment_method" class="form-label">Pay with:</label>
+                    <select class="form-select" id="payment_method" name="payment_method" required onchange="toggleDiv(this.value)">
+                        <option value="">Choose...</option>
+                        <option value="M-Pesa">M-Pesa</option>
+                        {% if wallet_usable_balance > lease_costs %}
+                            <option value="Wallet">Wallet</option>
+                        {% else %}
+                            <option value="Wallet" disabled>Wallet(Low Balance)</option>
+                        {% endif %}
+                    </select>
+                  </div>
+                </div>
+                <hr class="my-4">
+                  
+                  <div id="mpesaDiv" style="width: 100%;display: none;">
+                    <h4 class="mb-3">Payment:</h4>
+                    <label for="payInput" class="form-label">M-pesa Number<span class="text-muted">(2547xxxxxxxx)</span></label>
+                    <div>
+                       <input class="form-control" id="payInput" type="tel" placeholder="Enter your number" name="phone_number"/>
+                    </div>
+                  </div>
+                  
+                  <div id="walletDiv" style="width: 100%;display: none;">
+                    <p style="padding: 5px;text-align: center;font-weight: bold">Pay KES{{ lease_costs }} using your wallet</p>
+                  </div>
+                    
+                <hr class="my-4">
+                <button id="submit" type="submit" class="btn btn-primary w-100 fw-bold" style="background-color: green;border: none">Pay</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    <script>
+        function toggleDiv(value){
+            const mpesa_div = document.getElementById('mpesaDiv');
+            mpesa_div.style.display = value === "M-Pesa" ? "block" : "none";
+            const wallet_div = document.getElementById('walletDiv');
+            wallet_div.style.display = value === "Wallet" ? "block" : "none";
+        }
+    </script>
+{% endblock %}

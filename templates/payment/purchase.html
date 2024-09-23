@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Place order{% endblock %}
+{% block web_content %}
+    <style>
+        hr {
+            margin: 0;
+        }
+    </style>
+    <div class="container">
+        {% if messages %}
+            <div class="alert alert-success" alert="{{ message.tags }}" role="alert">
+                {% for message in messages %}
+                    {{ message }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="col col-11 colo-xs-10 col-sm-8 col-md-5 col-lg-4 col-xl-4"
+                 style="margin: 20px auto 200px;">
+                <div class="formsDiv">
+                    <h2 class="formTitle">ORDER FORM</h2>
+                    <hr>
+                    <h6 style="text-align: center">Fill the form below to make an order</h6>
+                    <form id="checkout-form" action="{% url 'payment:process_payment' %}" method="post">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="custName" class="form-label">Customer Name</label>
+                                <input type="text" class="inputs" id="custName"
+                                       placeholder="James Matata" required name="full_name"
+                                       value="{{ request.GET.full_name }}">
+                            </div>
+                            <div class="col-12">
+                                <label for="email" class="form-label">Email <span
+                                        class="text-muted">(Optional)</span></label>
+                                <input type="email" class="inputs" id="email"
+                                       placeholder="you@example.com" name="email"
+                                       value="{{ request.GET.email }}">
+                            </div>
+                            <div class="col-12">
+                                <label for="ownership-options">Ownership Options:</label>
+                                <select id="ownership-options" name="ownership_option" class="inputs"
+                                        required>
+                                    <option value="purchase"
+                                            {% if ownership_option == 'purchase' %}selected{% endif %}>
+                                        Purchase
+                                    </option>
+                                    <option value="lease"
+                                            {% if ownership_option == 'lease' %}selected{% endif %}>
+                                        Lease
+                                    </option>
+                                </select>
+                            </div>
+                            <div id="lease-weeks-div" style="display: none;">
+                                <label for="lease-weeks">Number of Weeks:</label>
+                                <input class="inputs" type="number" id="lease-weeks" name="lease_weeks"
+                                       min="1"
+                                       value="{{ lease_weeks|default:1 }}"
+                                       style="width: 100%; padding: 8px;">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="delivery-method">Delivery Method:</label>
+                                <select class="inputs" id="delivery-method" name="delivery_method">
+                                    <option value="in-store"
+                                            {% if delivery_method == 'in-store' %}selected{% endif %}>
+                                        In-Store
+                                    </option>
+                                    <option value="door-delivery"
+                                            {% if delivery_method == 'door-delivery' %}selected{% endif %}>
+                                        Door Delivery
+                                    </option>
+                                    <option value="pickup-point"
+                                            {% if delivery_method == 'pickup-point' %}selected{% endif %}>
+                                        Pick-up Point
+                                    </option>
+                                </select>
+                            </div>
+                            <div id="county" style="display: none;">
+                                <label for="county-select">County of Delivery:</label>
+                                <select class="inputs" id="county-select" name="county"
+                                        style="width: 100%; padding: 8px;">
+                                    {% for county in counties %}
+                                        <option {% if selected_county_id == county.id %}selected{% endif %}
+                                                value="{{ county.id }}">{{ county.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-12" id="delivery-points-div"
+                                 style="display: none;width: 100%;padding: 0 8px;flex-direction: column">
+                                <label for="custAdd">Delivery-Point</label>
+                                <input type="text" class="inputs" id="custAdd"
+                                       placeholder="Nairobi CBD" required name="dp1">
+                                <label for="custAdd2">Delivery-Point 2 <span
+                                        class="text-muted">(Optional)</span></label>
+                                <input type="text" class="inputs" id="custAdd2"
+                                       placeholder="Institution or Apartment" name="dp2">
+                            </div>
+
+                            <div class="col-12" id="pick-up-point-div" style="display: none;">
+                                <label for="pick-up-point">Pick-Up Point:</label>
+                                <select class="inputs" id="pick-up-point" name="pick-up-point">
+                                    <option>------ Choose Pick-up Point ------</option>
+                                    <option value="pick-up-point1">pick-up-point1</option>
+                                    <option value="pick-up-point2">pick-up-point2</option>
+                                    <option value="pick-up-point3">pick-up-point3</option>
+                                </select>
+                            </div>
+
+                            <div class="col-12">
+                                <label for="payment_method">Pay with:</label>
+                                <select class="inputs" id="payment_method" name="payment_method"
+                                        required onchange="togglePaymentDiv(this.value)">
+                                    <option>Choose...</option>
+                                    <option value="m-pesa">M-Pesa</option>
+                                    <option id="wallet_option" value="wallet">Wallet</option>
+                                </select>
+                            </div>
+                            <input type="text" id="wallet_usable_amount" value="{{ usable_balance }}" hidden="hidden">
+                        </div>
+
+                        <div id="mpesaDiv"
+                             style="width: 100%;display: none;margin: auto;border: 1px solid #b6b6b6;padding: 5px">
+                            <label for="payInput"></label>
+                            <input class="inputs" id="payInput" type="tel"
+                                   placeholder="Enter your M-pesa number(2547xxxxxxxx)"
+                                   name="phone_number"/>
+                        </div>
+                        <label for="purchase_subtotal"></label>
+                        <input type="text" id="purchase_subtotal" name="purchase_subtotal" value="{{ purchase_subtotal }}" hidden="hidden">
+                        <label for="total_costs_input"></label>
+                        <input type="text" hidden="hidden" id="total_costs_input"
+                               name="total_costs_input">
+                        <label for="delivery_costs"></label>
+                        <input type="text" hidden="hidden" value="0" id="delivery_costs" name="delivery_costs">
+                        <div id="walletDiv" style="width: 100%;display: none;">
+                            <p style="padding: 5px;text-align: center;font-weight: bold">Pay
+                                KES <span id="wallet-total-cost">{{ total_cost }}</span>
+                                using your wallet</p>
+                        </div>
+                        <hr>
+                        <p style="font-weight: bold;margin-left: 10px;">Total cost: <span
+                                id="total-cost" onchange="updateWalletOption()">{{ passed_total }}</span></p>
+                        <button id="submit" type="submit" class="btn btn-primary w-100 fw-bold"
+                                style="background-color: purple;border: none">Pay
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function togglePaymentDiv(value) {
+            const mpesa_div = document.getElementById('mpesaDiv');
+            mpesa_div.style.display = value === "m-pesa" ? "block" : "none";
+            const wallet_div = document.getElementById('walletDiv');
+            wallet_div.style.display = value === "wallet" ? "block" : "none";
+        }
+
+        function toggleLeaseWeeks() {
+            const ownershipOption = document.getElementById('ownership-options').value;
+            const leaseWeeksDiv = document.getElementById('lease-weeks-div');
+            leaseWeeksDiv.style.display = ownershipOption === 'lease' ? 'block' : 'none';
+            calculateTotalCost();
+        }
+
+        function toggleOtherDeliveryOptionsDiv() {
+            const deliveryMethod = document.getElementById('delivery-method').value;
+            const deliveryPointsDiv = document.getElementById('delivery-points-div');
+            const pickUpPointDiv = document.getElementById('pick-up-point-div');
+            const county = document.getElementById('county');
+            county.style.display = deliveryMethod === 'door-delivery' || deliveryMethod === 'pickup-point' ? 'block' : 'none';
+            deliveryPointsDiv.style.display = deliveryMethod === 'door-delivery' ? 'flex' : 'none';
+            pickUpPointDiv.style.display = deliveryMethod === 'pickup-point' ? 'block' : 'none';
+
+            const dp1 = document.getElementById('custAdd');
+            const dp2 = document.getElementById('custAdd2');
+            if (deliveryMethod === 'door-delivery') {
+                dp1.setAttribute('required', 'required');
+                dp2.removeAttribute('required');
+            } else {
+                dp1.removeAttribute('required');
+                dp2.removeAttribute('required');
+            }
+
+            calculateTotalCost();
+        }
+        
+        function updateWalletOption() {
+            const total_purchase_cost = document.getElementById('purchase_subtotal').value;
+            const wallet_usable_balance = document.getElementById('wallet_usable_amount').value;
+            const total_cost = document.getElementById('total-cost').value;
+            const wallet_option = document.getElementById('wallet_option')
+            if (wallet_usable_balance < total_purchase_cost + total_cost) {
+                wallet_option.disabled = true;
+            }
+        }
+
+        function calculateTotalCost() {
+            const ownershipOption = document.getElementById('ownership-options').value;
+            const deliveryMethod = document.getElementById('delivery-method').value;
+            const countyId = document.getElementById('county-select').value;
+            const leaseWeeks = ownershipOption === 'lease' ? parseInt(document.getElementById('lease-weeks').value) : 1;
+
+            let subtotal = ownershipOption === 'lease' ? parseFloat("{{ lease_subtotal }}") : parseFloat("{{ purchase_subtotal }}");
+            let deliveryCost = 0;
+
+            // Fetch the delivery cost based on the delivery method and selected county
+            $.ajax({
+                url: '{% url "basket:get_delivery_cost" %}',
+                data: {
+                    delivery_method: deliveryMethod,
+                    county_id: countyId,
+                },
+                success: function (data) {
+                    deliveryCost = parseFloat(data.delivery_cost);
+
+                    const totalCost = ownershipOption === 'lease' ? (subtotal * leaseWeeks) + deliveryCost : subtotal + deliveryCost;
+                    console.log(totalCost)
+                    document.getElementById('total-cost').textContent = 'KES ' + totalCost.toFixed(2);
+                    document.getElementById('wallet-total-cost').textContent = 'KES ' + totalCost.toFixed(2);
+                    document.getElementById('total_costs_input').value = totalCost.toFixed(2);
+                    document.getElementById('delivery_costs').value = deliveryCost.toFixed(2);
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error: ' + xhr.responseText);
+                }
+            });
+        }
+
+        document.getElementById('checkout-form').addEventListener('submit', function (event) {
+            const deliveryMethod = document.getElementById('delivery-method').value;
+            const dp1 = document.getElementById('custAdd');
+            const dp2 = document.getElementById('custAdd2');
+            if (deliveryMethod !== 'door-delivery') {
+                dp1.removeAttribute('required');
+                dp2.removeAttribute('required');
+            }
+        });
+
+        document.getElementById('ownership-options').addEventListener('change', toggleLeaseWeeks);
+        document.getElementById('delivery-method').addEventListener('change', toggleOtherDeliveryOptionsDiv);
+        document.getElementById('county-select').addEventListener('change', calculateTotalCost);
+        document.getElementById('lease-weeks').addEventListener('change', calculateTotalCost);
+
+        document.addEventListener('DOMContentLoaded', function () {
+            toggleOtherDeliveryOptionsDiv();
+            toggleLeaseWeeks();
+            calculateTotalCost();
+            updateWalletOption()
+        });
+    </script>
+
+
+
+{% endblock %}

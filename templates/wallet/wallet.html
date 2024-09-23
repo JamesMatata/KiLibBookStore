@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Wallet{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/wallet.css' %}">
+{% endblock %}
+
+{% block web_content %}
+    <div class="row">
+        <div style="margin: 20px auto 150px;" class="col col-11 colo-xs-7 col-sm-7 col-md-6 col-lg-5 col-xl-4 wallet-div">
+            <h1 style="text-align: center;color: purple;font-size: 25px">KiLib-Wallet</h1>
+            <hr>
+            <div style="width: 100%;border-bottom: 2px solid purple;">
+                <h4 style="font-size: 20px;text-align: center;font-weight: bold;"><span
+                        style="letter-spacing: 30px;">BALANC</span>E</h4>
+                <p style="text-align: center;">
+                    <span style="font-size: 20px;color: black;font-weight: bold;text-shadow: 0 0 2px purple;">KES</span>
+                    <span style="font-size: 50px;color: purple;font-weight: bold;text-align: center;text-shadow: 0 0 2px black;">{{ balance }}</span>
+                </p>
+                <div style="width: 100%;display: flex;flex-direction: row;justify-content: end ">
+                    <a href="{% url 'wallet:deposit' %}">
+                        <button class="walletButton">Deposit</button>
+                    </a>
+                </div>
+
+            </div>
+            <div style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;">
+                <p style="font-size: 18px;font-weight: bold">Usable balance: <span
+                        style="font-size: 15px">KES</span>{{ usable_balance }}</p>
+                <p style="font-size: 18px;font-weight: bold"><span
+                        style="font-size: 15px">KES</span>{{ locked_balance }}:Locked balance</p>
+            </div>
+            <hr>
+            <p style="text-align: center">Have not confirmed deposit yet? <a
+                    href="{% url "wallet:confirm_deposit" %}">Confirm</a></p>
+        </div>
+    </div>
+{% endblock %}

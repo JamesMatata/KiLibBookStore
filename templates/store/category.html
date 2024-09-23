@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+{% if category %}{{ category.name }}{% else %}Products{% endif %}
+{% endblock %}
+{% block web_content %}
+
+
+<main>
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <div class="pb-3 h5">{{category.name|title}}</div>
+            <div class="row g-3">
+                {% if user.is_authenticated and user.is_seller is not False %}
+                    {% for product in seller_posted_category_books %}
+                        <div class="col col-6 colo-xs-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
+                            <div class="card shadow-sm">
+                                <div style="border-radius: 2px">
+                                    <img  style="object-fit: contain;border-radius: 5px;height: 250px;width: 100%" alt="Responsive image" src="{{ product.image.url }}">
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text" style="line-height: 20px;max-height: 20px;overflow: hidden">
+                                        <a class="text-dark text-decoration-none" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted" style="line-height: 20px;max-height: 20px;overflow: hidden">Ksh.{{ product.price }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    {% for product in products %}
+                        <div class="col col-6 colo-xs-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
+                            <div class="card shadow-sm">
+                                <div style="border-radius: 2px">
+                                    <img  style="object-fit: contain;border-radius: 5px;height: 250px;width: 100%" alt="Responsive image" src="{{ product.image.url }}">
+                                </div>
+                                <div class="card-body">
+                                    <p class="card-text" style="line-height: 20px;max-height: 20px;overflow: hidden">
+                                        <a class="text-dark text-decoration-none" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                                    </p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted" style="line-height: 20px;max-height: 20px;overflow: hidden">Ksh.{{ product.price }}</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock %}

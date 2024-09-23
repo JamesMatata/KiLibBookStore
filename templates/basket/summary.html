@@ -1,0 +1,512 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Basket Summary{% endblock %}
+{% block web_content %}
+    <style>
+        option {
+            background: white;
+            color: purple;
+            transition: 0.1s;
+            padding: 4px;
+        }
+
+        option:hover, option:active {
+            background: purple;
+            color: white;
+        }
+    </style>
+    <div class="container">
+        <div class="row">
+            {% if basket|length == 0 %}
+                <p id="no-items-in-basket"
+                   style="margin-bottom: 400px;margin-top: 20px;text-align: center;font-size: 18px;">
+                    Your basket is empty <a href="{% url 'store:index' %}">Shop</a>
+                </p>
+            {% else %}
+                <div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-9">
+                    <div class="container">
+                        {% if messages %}
+                            <div class="alert alert-primary" role="alert">
+                                {% for message in messages %}
+                                    <p>{{ message|safe }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <h1 style="font-size: 22px;font-weight: bold">Shopping basket</h1>
+                        <hr/>
+
+                        {% for item in basket %}
+                            {% with product=item.product %}
+                                <div data-index="{{ product.id }}" class="row border product-item">
+                                    <div class="col-12 col-sm-12 col-md-4 col-lg-3 col-xl-3" style="padding: 2px">
+                                        <img style="object-fit: contain;max-height: 130px;width: 100%;"
+                                             alt="Responsive image" src="{{ product.image.url }}">
+                                    </div>
+                                    <div class="col-12 col-sm-12 col-md-8 col-lg-9 col-xl-9" style="padding: 2px;">
+                                        <a href="{{ product.get_absolute_url }}"
+                                           class="text-decoration-none text-reset">
+                                            <p style="font-size: 18px;font-weight: bold;margin: 0;">{{ product.title }}</p>
+                                        </a>
+                                        <div class="border">
+                                            <div class="col border-bottom">
+                                                <div style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 10px">
+                                                    <p style="margin: 0">KiLib Books</p>
+                                                    <div style="display: flex;flex-direction: row;align-items: center;justify-content: center;">
+                                                        <p style="margin: 0">Price: Ksh.{{ product.price }}</p>
+                                                        <p style="margin: 0">Lease rates:
+                                                            Ksh.{{ product.book_lease_rates }}/week</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div style="display: flex;flex-direction: row;align-items: center;justify-content: space-between;padding: 10px">
+                                                <div style="display: flex;flex-direction: row;align-items: center;justify-content: center">
+                                                    <label for="quantity{{ product.id }}">Qty</label>
+                                                    <input type="number" name="bookNumber" id="quantity{{ product.id }}"
+                                                           value="{{ item.qty }}"
+                                                           style="width: 70px;padding-bottom: 5px;border: 1px solid purple;border-radius: 3px"/>
+                                                    <button type="button" id="update-button"
+                                                            data-index="{{ product.id }}" class="btn update-button"
+                                                            style="border: 1px solid purple;color: purple;margin-left: 10px;padding: 5px 10px;">
+                                                        Update
+                                                    </button>
+                                                </div>
+                                                <div style="display: flex;flex-direction: row;align-items: center;justify-content: center">
+                                                    {% if user.is_authenticated %}
+                                                        <a role="button" style="padding: 5px;" href="#"
+                                                           class="wishlist-button" data-product-id="{{ product.id }}">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="25"
+                                                                 height="25"
+                                                                 fill="{% if product.id in wishlist %}purple{% else %}wheat{% endif %}"
+                                                                 class="bi bi-heart-fill" viewBox="0 0 16 16">
+                                                                <path fill-rule="evenodd"
+                                                                      d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"></path>
+                                                            </svg>
+                                                        </a>
+                                                    {% endif %}
+                                                    <button style="background: transparent;padding: 5px;border: none;"
+                                                            type="button" id="delete-button" class="delete-button"
+                                                            data-index="{{ product.id }}">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25"
+                                                             fill="red" class="bi bi-trash3" viewBox="0 0 16 16">
+                                                            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"></path>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endwith %}
+                        {% endfor %}
+
+                    </div>
+                </div>
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-3" style="padding: 5px;">
+                    <div class="border p-3 basket-summary"
+                         style="box-shadow: 0 0 4px rgba(0,0,0,0.1);margin-bottom: 200px">
+                        <form id="summary-form" action="{% url 'payment:process_payment' %}" method="GET">
+                            <div style="width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+                                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                    <p>Items</p>
+                                    <p id="no-of-basket-items">{{ basket|length }}</p>
+                                </div>
+                                <input type="hidden" name="purchase_subtotal" value="{{ basket.get_total_price }}">
+                                <input type="hidden" name="lease_subtotal" value="{{ basket.get_total_lease_price }}">
+                                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                    <p>Sub-total(Kes)</p>
+                                    <p id="subtotal">{{ basket.get_total_price }}</p>
+                                    <p style="display: none;" id="subtotal-lease">{{ basket.get_total_lease_price }}/week</p>
+                                </div>
+                            </div>
+                            <label for="ownership-options">Ownership Options:</label>
+                            <select id="ownership-options" name="ownership_options" onchange="calculateTotalCost()"
+                                    style="width: 100%; padding: 8px;">
+                                <option value="purchase" selected>Purchase</option>
+                                <option value="lease">Lease</option>
+                            </select>
+
+                            <div id="lease-weeks-div" style="display: none;">
+                                <label for="lease-weeks">Number of Weeks:</label>
+                                <input type="number" id="lease-weeks" name="lease_weeks" min="1" value="1"
+                                       style="width: 100%; padding: 8px;" onchange="calculateTotalCost()">
+                            </div>
+
+                            <label for="delivery-method">Delivery Method:</label>
+                            <select id="delivery-method" name="delivery_method" onchange="showHideAddressInput()"
+                                    style="width: 100%; padding: 8px;">
+                                <option value="in-store" selected>In-Store Pickup</option>
+                                <option value="door-delivery">Door Delivery</option>
+                                <option value="pickup-point">Pick-up Point</option>
+                            </select>
+
+                            <div id="county" style="display: none;">
+                                <label for="county-select">County of Delivery:</label>
+                                <select id="county-select" name="county" style="width: 100%; padding: 8px;">
+                                    {% for county in counties %}
+                                        <option value="{{ county.id }}">{{ county.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <hr>
+                            <div style="width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+                                <p>Total costs:</p>
+                                <p id="total-costs"></p>
+                                <label for="total-costs-input"></label><input type="text" hidden="hidden" id="total-costs-input" name="total-costs-input" value="0">
+                            </div>
+                            <button type="submit"
+                                    style="padding: 7px 0; width: 100%; border: none; border-radius: 2px; color: white; background: purple;">
+                                Checkout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function showHideAddressInput() {
+        var deliveryMethod = document.getElementById("delivery-method").value;
+        var countyInput = document.getElementById("county");
+
+        if (deliveryMethod === "door" || deliveryMethod === "pickup-point") {
+            countyInput.style.display = "block";
+        } else {
+            countyInput.style.display = "none";
+        }
+        calculateTotalCost();
+    }
+
+    function calculateTotalCost() {
+        const deliveryMethod = document.getElementById("delivery-method").value;
+        const ownershipOption = document.getElementById("ownership-options").value;
+        const totalCostElement = document.getElementById("total-costs");
+        const totalCostElementInput = document.getElementById("total-costs-input");
+        const subtotalElement = document.getElementById("subtotal");
+        const subtotalLeaseElement = document.getElementById("subtotal-lease");
+        let subtotal = 0;
+        let leaseWeeks = 1;
+
+        if (ownershipOption === "purchase") {
+            subtotalElement.style.display = 'inline';
+            subtotalLeaseElement.style.display = 'none';
+            subtotal = parseFloat(subtotalElement.textContent);
+        } else if (ownershipOption === "lease") {
+            subtotalElement.style.display = 'none';
+            subtotalLeaseElement.style.display = 'inline';
+            subtotal = parseFloat(subtotalLeaseElement.textContent);
+            leaseWeeks = parseInt(document.getElementById("lease-weeks").value);
+        }
+
+        let deliveryCost = 0;
+
+        // Fetch the delivery cost based on the delivery method and selected county
+        const countyId = document.getElementById("county-select").value;
+        $.ajax({
+            url: '{% url "basket:get_delivery_cost" %}',
+            data: {
+                delivery_method: deliveryMethod,
+                county_id: countyId,
+            },
+            success: function (data) {
+                deliveryCost = parseFloat(data.delivery_cost);
+                if (ownershipOption === "lease") {
+                    totalCostElement.textContent = 'Kes ' + ((subtotal * leaseWeeks) + deliveryCost).toFixed(2);
+                    totalCostElementInput.value = (subtotal * leaseWeeks) + deliveryCost;
+                } else {
+                    totalCostElement.textContent = 'Kes ' + (subtotal + deliveryCost).toFixed(2);
+                    totalCostElementInput.value = subtotal + deliveryCost;
+                }
+                console.log(totalCostElementInput.value);
+            },
+            error: function (xhr, status, error) {
+                console.log('Error: ' + xhr.responseText);
+            }
+        });
+    }
+
+    document.getElementById("ownership-options").addEventListener("change", function () {
+        const ownershipOption = document.getElementById("ownership-options").value;
+        const leaseWeeksDiv = document.getElementById("lease-weeks-div");
+
+        if (ownershipOption === "lease") {
+            leaseWeeksDiv.style.display = "block";
+        } else {
+            leaseWeeksDiv.style.display = "none";
+        }
+
+        calculateTotalCost();
+    });
+
+    document.getElementById("county-select").addEventListener("change", calculateTotalCost);
+    document.getElementById("delivery-method").addEventListener("change", calculateTotalCost);
+    document.getElementById("lease-weeks").addEventListener("change", calculateTotalCost);
+
+    $(document).on('click', '.delete-button', function (e) {
+        e.preventDefault();
+        const prodid = $(this).data('index');
+        $.ajax({
+            type: 'POST',
+            url: '{% url "basket:basket_delete" %}',
+            data: {
+                productid: $(this).data('index'),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post',
+            },
+            success: function (json) {
+                $('.product-item[data-index="' + prodid + '"]').remove();
+                document.getElementById("subtotal").innerHTML = json.subtotal;
+                document.getElementById("basket-qty").innerHTML = json.qty;
+
+                // Display message if basket is empty
+                if (json.qty === 0) {
+                    const container = document.querySelector('.container');
+                    container.innerHTML = `
+            <p id="no-items-in-basket" style="margin-bottom: 400px;margin-top: 20px;text-align: center;font-size: 18px;">
+                Your basket is empty <a href="{% url 'store:index' %}">Shop</a>
+            </p>`;
+                }
+
+                displayMessage(json.message);
+                calculateTotalCost(); // Ensure total cost recalculates
+            },
+            error: function (xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    });
+
+    $(document).on('click', '.update-button', function (e) {
+        e.preventDefault();
+        const prodid = $(this).data('index');
+        const quantity = $('#quantity' + prodid).val();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "basket:basket_update" %}',
+            data: {
+                productid: $(this).data('index'),
+                productqty: quantity,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function (json) {
+                document.getElementById("basket-qty").innerHTML = json.qty;
+                document.getElementById("subtotal").innerHTML = json.subtotal;
+                document.getElementById("no-of-basket-items").innerHTML = json.qty;
+                calculateTotalCost(); // Ensure total cost recalculates
+            },
+            error: function (xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    });
+
+    // Toggle Wishlist Item
+    $(document).on('click', '.wishlist-button', function (e) {
+        e.preventDefault();
+        const button = $(this);
+        const product_id = button.data('product-id');
+        $.ajax({
+            type: 'POST',
+            url: '{% url "accounts:toggle_wishlist" %}',
+            data: {
+                productid: product_id,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function (json) {
+                if (json.in_wishlist) {
+                    button.find('svg').removeClass('bi-heart').addClass('bi-heart-fill').css('fill', 'purple');
+                } else {
+                    button.find('svg').removeClass('bi-heart-fill').addClass('bi-heart').css('fill', 'wheat');
+                }
+                displayMessage(json.message);
+            },
+            error: function (xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    });
+
+    function displayMessage(message) {
+        $('.alert-primary').html('<p>' + message + '</p>').show();
+    }
+</script>
+<script>
+
+    calculateTotalCost();
+    
+    function showHideAddressInput() {
+        const deliveryMethod = document.getElementById("delivery-method").value;
+        const countyInput = document.getElementById("county");
+
+        if (deliveryMethod === "door-delivery" || deliveryMethod === "pickup-point") {
+            countyInput.style.display = "block";
+        } else {
+            countyInput.style.display = "none";
+        }
+        calculateTotalCost();
+    }
+
+    function calculateTotalCost() {
+        const deliveryMethod = document.getElementById("delivery-method").value;
+        const ownershipOption = document.getElementById("ownership-options").value;
+        const totalCostElement = document.getElementById("total-costs");
+        const totalCostElementInput = document.getElementById("total-costs-input");
+        const subtotalElement = document.getElementById("subtotal");
+        const subtotalLeaseElement = document.getElementById("subtotal-lease");
+        let subtotal = 0;
+        let leaseWeeks = 1;
+
+        if (ownershipOption === "purchase") {
+            subtotalElement.style.display = 'inline';
+            subtotalLeaseElement.style.display = 'none';
+            subtotal = parseFloat(subtotalElement.textContent);
+        } else if (ownershipOption === "lease") {
+            subtotalElement.style.display = 'none';
+            subtotalLeaseElement.style.display = 'inline';
+            subtotal = parseFloat(subtotalLeaseElement.textContent);
+            leaseWeeks = parseInt(document.getElementById("lease-weeks").value);
+        }
+
+        let deliveryCost = 0;
+
+        // Fetch the delivery cost based on the delivery method and selected county
+        const countyId = document.getElementById("county-select").value;
+        $.ajax({
+            url: '{% url "basket:get_delivery_cost" %}',
+            data: {
+                delivery_method: deliveryMethod,
+                county_id: countyId,
+            },
+            success: function (data) {
+                deliveryCost = parseFloat(data.delivery_cost);
+                if (ownershipOption === "lease") {
+                    totalCostElement.textContent = 'Kes ' + ((subtotal * leaseWeeks) + deliveryCost).toFixed(2);
+                    totalCostElementInput.value = (subtotal * leaseWeeks) + deliveryCost;
+                } else {
+                    totalCostElement.textContent = 'Kes ' + (subtotal + deliveryCost).toFixed(2);
+                    totalCostElementInput.value = subtotal + deliveryCost;
+                }
+                console.log(totalCostElementInput.value);
+            },
+            error: function (xhr, status, error) {
+                console.log('Error: ' + xhr.responseText);
+            }
+        });
+    }
+
+    document.getElementById("ownership-options").addEventListener("change", function () {
+        const ownershipOption = document.getElementById("ownership-options").value;
+        const leaseWeeksDiv = document.getElementById("lease-weeks-div");
+
+        if (ownershipOption === "lease") {
+            leaseWeeksDiv.style.display = "block";
+        } else {
+            leaseWeeksDiv.style.display = "none";
+        }
+
+        calculateTotalCost();
+    });
+
+    document.getElementById("county-select").addEventListener("change", calculateTotalCost);
+    document.getElementById("delivery-method").addEventListener("change", calculateTotalCost);
+    document.getElementById("lease-weeks").addEventListener("change", calculateTotalCost);
+
+    $(document).on('click', '.delete-button', function (e) {
+        e.preventDefault();
+        let prodid = $(this).data('index');
+        $.ajax({
+            type: 'POST',
+            url: '{% url "basket:basket_delete" %}',
+            data: {
+                productid: $(this).data('index'),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function (json) {
+                $('.product-item[data-index="' + prodid + '"]').remove();
+                document.getElementById("subtotal").innerHTML = json.subtotal;
+                document.getElementById("basket-qty").innerHTML = json.qty;
+
+                // Display message if basket is empty
+                if (json.qty === 0) {
+                    const container = document.querySelector('.container');
+                    container.innerHTML = `
+            <p id="no-items-in-basket" style="margin-bottom: 400px;margin-top: 20px;text-align: center;font-size: 18px;">
+                Your basket is empty <a href="{% url 'store:index' %}">Shop</a>
+            </p>`;
+                }
+
+                displayMessage(json.message);
+                calculateTotalCost(); // Ensure total cost recalculates
+            },
+            error: function (xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    });
+
+    $(document).on('click', '.update-button', function (e) {
+        e.preventDefault();
+        let prodid = $(this).data('index');
+        let quantity = $('#quantity' + prodid).val();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "basket:basket_update" %}',
+            data: {
+                productid: $(this).data('index'),
+                productqty: quantity,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function (json) {
+                document.getElementById("basket-qty").innerHTML = json.qty;
+                document.getElementById("subtotal").innerHTML = json.subtotal;
+                document.getElementById("no-of-basket-items").innerHTML = json.qty;
+                calculateTotalCost(); // Ensure total cost recalculates
+            },
+            error: function (xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    });
+
+    // Toggle Wishlist Item
+    $(document).on('click', '.wishlist-button', function (e) {
+        e.preventDefault();
+        const button = $(this);
+        let product_id = button.data('product-id');
+        $.ajax({
+            type: 'POST',
+            url: '{% url "accounts:toggle_wishlist" %}',
+            data: {
+                productid: product_id,
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function (json) {
+                if (json.in_wishlist) {
+                    button.find('svg').removeClass('bi-heart').addClass('bi-heart-fill').css('fill', 'purple');
+                } else {
+                    button.find('svg').removeClass('bi-heart-fill').addClass('bi-heart').css('fill', 'wheat');
+                }
+                displayMessage(json.message);
+            },
+            error: function (xhr, errmsg, err) {
+                console.log(xhr.status + ": " + xhr.responseText);
+            }
+        });
+    });
+
+    function displayMessage(message) {
+        $('.alert-primary').html('<p>' + message + '</p>').show();
+    }
+</script>
+
+
+
+{% endblock %}

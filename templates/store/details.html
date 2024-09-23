@@ -1,0 +1,136 @@
+ {% extends "base.html" %}
+{% load static %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block web_content %}
+<main class="pt-5">
+    <div class="container">
+        {% if user.is_authenticated and user.is_seller is not False %}
+            <div class="row g-3">
+                <div class="col-md-5 col-lg-5 order-md-first bg-light" style="border: 1px solid rgba(128, 0, 128, 0.3);height: 400px">
+                    <img style="object-fit: contain;height: 100%;width: 100%;" alt="Book image" src="{{ product.image.url }}">
+                </div>
+                <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
+                    <div>
+                        <h1 class="mb-0 h4">{{ product.title }}</h1>
+                    </div>
+                    <hr style="color: purple;">
+                    <p style="font-size: 16px;width: 100%;word-wrap: break-word;">{{ product.description|slice:300 }}...</p>
+                    <div style="border: 1px solid rgba(128, 0, 128, 0.3);">
+                        <div class="col" style="border-bottom: 1px solid rgba(128, 0, 128, 0.3);">
+                            <div class="row p-3">
+                                <div class="col-12">KiLib-store-Books</div>
+                                <div class="col-6">
+                                    <p style="margin: 5px 0;float: right;">Price:<span style="font-weight: bold;"> Ksh.{{ product.price }}</span></p>
+                                </div>
+                                <div class="col-6"> 
+                                    <p style="margin: 5px auto;float: right;">Book_lease-rates:<span style="font-weight: bold;"> Ksh.{{ product.book_lease_rates }}/week</span></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div style="margin: auto;" class="row">
+                                <div>
+                                    <a href="{% url 'store:update_product' product.id %}"><button type="button" style="background-color: purple;color: white;width: 100%;margin-top: 5px;" value="{{ product.id }}" class="btn fw500">Edit-product-details</button></a>
+                                </div>
+                                <div>
+                                    <a href="{% url 'store:delete_product' product.id %}"><button type="button" style="background-color: red;color: white;width: 100%;margin-top: 5px;" value="{{ product.id }}" class="btn fw500">Delete-product</button></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            {% if messages %}
+                <div class="alert alert-primary" alert="{{ message.tags }}" role="alert">
+                    {% for message in messages %}
+                        <p style="text-align: center;margin: 0">{{message}} - <a href="{% url 'accounts:wishlist' %}" class="alert-link">Your wishlist</a></p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <div class="row g-3">
+                <div class="col-md-5 col-lg-5 order-md-first bg-light">
+                    <img class="img-fluid mx-auto d-block" style="border: 1px solid rgba(128, 0, 128, 0.3);height: 400px; object-fit: contain" alt="Responsive image" src="{{ product.image.url }}">
+                </div>
+                <div class="col-md-7 col-lg-7 ps-md-3 ps-lg-5">
+                    <div>
+                        <h1 class="mb-0 h4">{{ product.title }}</h1>
+                    </div>
+                    <hr>
+                    <p style="font-size: 16px;width: 100%;word-wrap: break-word;">{{ product.description|slice:300}}...</p>
+                    <div class="border">
+                        <div class="col border-bottom">
+                            <div class="row p-3">
+                                <div class="col-6">{{ seller.business_name }}</div>
+                                <div class="col-6 text-end"><span class="h4 fw-bold">Ksh.{{ product.price }}</span></div>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="row p-3">
+                                <div class="col col-12 col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                    <label for="quantity">Qty</label>
+                                    <input type="number" name="bookNumber" id="quantity" style="width: 70px"/>
+                                </div>
+                                <div class="col col-12 col-xs-6 col-sm-6 col-md-6 col-lg-6 col-xl-6 text-end">
+                                    <button type="button" style="background-color: purple;color: white" id="add-button" value="{{ product.id }}" class="btn fw500">Add to
+                                        basket
+                                    </button>
+                                    {% if user.is_authenticated %}
+                                        <a href="{% url 'accounts:user_wishlist' product.id %}" class="btn btn-light fw500" role="button" aria-disabled="true">Add-to-Wishlist</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+    
+            <div class="pb-3 h5">Related products</div>
+            <div class="row g-3">
+                {% for product in related_products %}
+                    <div class="col col-6 colo-xs-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
+                        <div class="card shadow-sm">
+                            <div style="border-radius: 2px">
+                                <img  style="object-fit: contain;border-radius: 5px;height: 250px;width: 100%" alt="Responsive image" src="{{ product.image.url }}">
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text" style="line-height: 20px;max-height: 20px;overflow: hidden">
+                                    <a class="text-dark text-decoration-none" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted" style="line-height: 20px;max-height: 20px;overflow: hidden">Ksh.{{ product.price }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</main>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+     $(document).on('click', '#add-button', function (e) {
+         e.preventDefault();
+         var quantity = $('#quantity').val();
+         $.ajax({
+             type: 'POST',
+             url: '{% url "basket:basket_add" %}',
+             data: {
+                 productid: $('#add-button').val(),
+                 productqty: quantity,
+                 csrfmiddlewaretoken: '{{ csrf_token }}',
+                 action: 'post'
+             },
+             success: function (json) {
+                 document.getElementById("basket-qty").innerHTML = json.qty;
+             },
+             error: function(xhr, errmsg, err) {
+                 console.log(xhr.status + ": " + xhr.responseText);
+             }
+         });
+     });
+</script>
+
+{% endblock %}

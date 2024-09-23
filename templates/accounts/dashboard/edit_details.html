@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile{% endblock %}
+{% block web_content %}
+
+<style>
+    .account-form input {
+        border: 1px solid purple;
+        height: calc(2em + .75rem + 2px);
+    }
+
+    .account-form input:focus {
+        border-color: purple;
+        box-shadow: none;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row no-gutter">
+        <div class="col-md-12">
+            <div class="login d-flex align-items-center py-5">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 col-lg-7  mx-auto">
+
+                        <form class="account-form px-4 pt-4" method="post" enctype="multipart/form-data">
+
+                            {% if user_form.is_valid and profile_form.is_valid  %}
+                            <div class="alert alert-primary" role="alert">
+                                Details successfully updated!
+                            </div>
+                            <p class="small text-center pt-0">
+                                <a href="{% url "accounts:dashboard" %}">Back to Dashboard</a>
+                            </p>
+                            {%else%}
+                            <h3 style="text-align: center;color: purple">CHANGE YOUR DETAILS OR PASSWORD</h3>
+                                <hr>
+                            <p></p>
+                            {% endif %}
+
+                            {% if form.errors %}
+                            <div class="alert alert-primary" role="alert">
+                                Error: Please try again!
+                            </div>
+                            {% endif %}
+
+                            {% csrf_token %}
+                            <label class="small font-weight-bold">{{ user_form.email.label}}</label>
+                            {{ user_form.email }}
+                            <label class="small font-weight-bold">{{ user_form.username.label}}</label>
+                            {{ user_form.username }}
+                            <label class="small font-weight-bold">{{ user_form.first_name.label}}</label>
+                            {{ user_form.first_name }}
+                            <label class="small font-weight-bold">{{ user_form.last_name.label}}</label>
+                            {{ user_form.last_name }}
+
+
+                            <button style="background-color: purple;color: white" class="btn btn-block py-2 mb-4 mt-5 fw-bold w-100" type="submit"
+                                value="Save changes">Save Changes</button>
+                            <hr class="mb-3">
+                        </form>
+                            <div class="container" style="padding: 20px">
+                                <h5>Change your password</h5>
+                                <p>If you want to change your password, click the button below </p>
+                                <a href="{% url 'accounts:password_change_view' %}"><button style="background-color: purple;color: white" class="btn btn-block py-2 mb-4 mt-5 fw-bold w-100" type="button"
+                                value="Save changes">Change password</button></a>
+                            </div>
+                                <hr>
+                             <form class="account-form px-4" action="{% url "accounts:delete_user" %}" method="post">
+                                {% csrf_token %}
+                                <p class=" h3 pt-4 font-weight-bold">Delete Account</p>
+                                <p>Are you sure you want to delete your account?</p>
+                                <button type="submit" role="button"
+                                    class="btn btn-danger btn-block py-2 mb-4 mt-5 fw-bold w-100">Delete</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
