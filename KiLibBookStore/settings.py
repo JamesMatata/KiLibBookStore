@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -154,23 +155,14 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 
-"""
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.elasticemail.com'
+EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-EMAIL_PORT = 2525
-EMAIL_HOST_USER = 'kilibbookstore@gmail.com'
-EMAIL_HOST_PASSWORD = 'E6550FAD02D02CC7F1175D425A1EAA2AD9C0'
-DEFAULT_FROM_EMAIL = 'jamesmatata1000@gmail.com'
-"""
+EMAIL_HOST_USER = 'jamesmatatamule@gmail.com'
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = 'Kilib Book-store <kilibbookstore@wisecode.me>'
 
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_POST = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('traces_email')
-EMAIL_HOST_PASSWORD = os.environ.get('traces_email_password')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -181,14 +173,14 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 MPESA_ENVIRONMENT = 'sandbox'
-MPESA_CONSUMER_KEY = '5o8JMOMJHBeTvunyU9CGa3EATA28rCq616oMCXhh0yAnNARP'
-MPESA_CONSUMER_SECRET = 'CgfTRTVGisiG3l1Sskdr0Hxj9OPAoiHMCCkKETlENzueafRPZw68hlUx8MxNw5A6'
+MPESA_CONSUMER_KEY = config('MPESA_CONSUMER_KEY')
+MPESA_CONSUMER_SECRET = config('MPESA_CONSUMER_SECRET')
 
 # Shortcode and express appears under my simulator when I select the app I am working on
 MPESA_SHORTCODE = '174379'
 MPESA_EXPRESS_SHORTCODE = '174379'
 MPESA_SHORTCODE_TYPE = 'paybill'
-MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
+MPESA_PASSKEY = config('MPESA_PASSKEY')
 
 # We then add the initiator username and inititor password is given on the daraja simulator
 MPESA_INITIATOR_USERNAME = 'testapi'

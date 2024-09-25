@@ -32,6 +32,13 @@
           <div class="container">
             <div class="row">
               <div id="payment-form" class="col-12 col-lg-7 mx-auto">
+              {% if messages %}
+                    <div class="alert alert-primary" alert="{{ message.tags }}" role="alert">
+                        {% for message in messages %}
+                            {{message}}
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <h2 class="mb-3" style="text-align: center;color: purple">EDIT PRODUCT DETAILS</h2>
                   <hr>
                 <div id="card-errors" class="a" role="alert"></div>

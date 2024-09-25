@@ -1,4 +1,11 @@
+from django.db import transaction
 from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.models import User
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+
+from django.core.mail import send_mail, BadHeaderError
+from django.conf import settings
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
@@ -105,13 +112,16 @@ def register(request):
         business_name = None
         business_email = None
         business_address = None
+
         if usertype == 'Seller':
             business_name = request.POST.get('business_name')
             business_email = request.POST.get('business_email')
             business_address = request.POST.get('business_address')
+
         password = request.POST.get('pass')
         password2 = request.POST.get('pass2')
 
+        # Validation checks
         if len(password) < 8:
             messages.add_message(request, messages.ERROR,
                                  'Password should be at least 8 characters')
@@ -122,7 +132,9 @@ def register(request):
                                  'Password mismatch')
             context['has_error'] = True
 
-        if not validate_email(email):
+        try:
+            validate_email(email)
+        except ValidationError:
             messages.add_message(request, messages.ERROR,
                                  'Enter a valid email address')
             context['has_error'] = True
@@ -145,35 +157,60 @@ def register(request):
         if context['has_error']:
             return render(request, 'accounts/register.html', context)
 
-        else:
-            new_user = User.objects.create_user(username=username, email=email)
-            new_user.set_password(password)
-            new_user.first_name = fname
-            new_user.last_name = lname
-            if usertype == 'Seller':
-                new_user.is_seller = True
-            if usertype == 'Buyer':
-                new_user.is_buyer = True
-            new_user.is_active = False
-            if usertype == 'Seller':
-                new_business = Seller(user=new_user, business_name=business_name,
-                                      business_email=business_email, business_address=business_address
-                                      )
-                new_business.save()
-            new_user.save()
-            # Setting-up email
-            current_site = get_current_site(request)
-            subject = 'Activate your Account'
-            message = render_to_string('accounts/account_activation_email.html', {
-                'user': new_user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(new_user.pk)),
-                'token': account_activation_token.make_token(new_user),
-            })
-            new_user.email_user(subject=subject, message=message)
-            messages.success(request, 'Account creation was successful, confirm you email using the link send to '
-                                      'activate.')
-            return redirect('store:index')
+        # Proceed to create the user and send the email
+        try:
+            with transaction.atomic():
+                # Create the user
+                new_user = User.objects.create_user(username=username, email=email)
+                new_user.set_password(password)
+                new_user.first_name = fname
+                new_user.last_name = lname
+
+                if usertype == 'Seller':
+                    new_user.is_seller = True
+                if usertype == 'Buyer':
+                    new_user.is_buyer = True
+
+                new_user.is_active = False  # User must activate their account
+                new_user.save()
+
+                if usertype == 'Seller':
+                    new_business = Seller(user=new_user, business_name=business_name,
+                                          business_email=business_email, business_address=business_address)
+                    new_business.save()
+
+                # Generate activation token and UID
+                current_site = get_current_site(request)
+                subject = 'Activate your Account'
+                uidb64 = urlsafe_base64_encode(force_bytes(new_user.pk))
+                token = account_activation_token.make_token(new_user)
+
+                # Render email content
+                html_message = render_to_string('accounts/account_activation_email.html', {
+                    'user': new_user,
+                    'domain': current_site.domain,
+                    'uid': uidb64,
+                    'token': token,
+                })
+
+                # Send email
+                send_mail(
+                    subject=subject,
+                    message='',  # Leave this as an empty string
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[email],
+                    html_message=html_message,  # HTML content goes here
+                )
+
+
+        except BadHeaderError:
+            messages.error(request, 'Invalid header found while sending email.')
+        except Exception as e:
+            messages.error(request, f"An error occurred: {e}")
+            return render(request, 'accounts/register.html', context)
+
+        messages.success(request, 'Account creation was successful. Check your email for the activation link.')
+        return redirect('store:index')
 
     return render(request, 'accounts/register.html')
 

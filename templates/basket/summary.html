@@ -153,7 +153,9 @@
                             <div style="width: 100%; display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
                                 <p>Total costs:</p>
                                 <p id="total-costs"></p>
-                                <label for="total-costs-input"></label><input type="text" hidden="hidden" id="total-costs-input" name="total-costs-input" value="0">
+                                <label for="total-costs-input"></label><input type="text" hidden="hidden"
+                                                                              id="total-costs-input"
+                                                                              name="total-costs-input" value="0">
                             </div>
                             <button type="submit"
                                     style="padding: 7px 0; width: 100%; border: none; border-radius: 2px; color: white; background: purple;">
@@ -167,345 +169,177 @@
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    function showHideAddressInput() {
-        var deliveryMethod = document.getElementById("delivery-method").value;
-        var countyInput = document.getElementById("county");
+    <script>
 
-        if (deliveryMethod === "door" || deliveryMethod === "pickup-point") {
-            countyInput.style.display = "block";
-        } else {
-            countyInput.style.display = "none";
-        }
         calculateTotalCost();
-    }
 
-    function calculateTotalCost() {
-        const deliveryMethod = document.getElementById("delivery-method").value;
-        const ownershipOption = document.getElementById("ownership-options").value;
-        const totalCostElement = document.getElementById("total-costs");
-        const totalCostElementInput = document.getElementById("total-costs-input");
-        const subtotalElement = document.getElementById("subtotal");
-        const subtotalLeaseElement = document.getElementById("subtotal-lease");
-        let subtotal = 0;
-        let leaseWeeks = 1;
+        function showHideAddressInput() {
+            const deliveryMethod = document.getElementById("delivery-method").value;
+            const countyInput = document.getElementById("county");
 
-        if (ownershipOption === "purchase") {
-            subtotalElement.style.display = 'inline';
-            subtotalLeaseElement.style.display = 'none';
-            subtotal = parseFloat(subtotalElement.textContent);
-        } else if (ownershipOption === "lease") {
-            subtotalElement.style.display = 'none';
-            subtotalLeaseElement.style.display = 'inline';
-            subtotal = parseFloat(subtotalLeaseElement.textContent);
-            leaseWeeks = parseInt(document.getElementById("lease-weeks").value);
-        }
-
-        let deliveryCost = 0;
-
-        // Fetch the delivery cost based on the delivery method and selected county
-        const countyId = document.getElementById("county-select").value;
-        $.ajax({
-            url: '{% url "basket:get_delivery_cost" %}',
-            data: {
-                delivery_method: deliveryMethod,
-                county_id: countyId,
-            },
-            success: function (data) {
-                deliveryCost = parseFloat(data.delivery_cost);
-                if (ownershipOption === "lease") {
-                    totalCostElement.textContent = 'Kes ' + ((subtotal * leaseWeeks) + deliveryCost).toFixed(2);
-                    totalCostElementInput.value = (subtotal * leaseWeeks) + deliveryCost;
-                } else {
-                    totalCostElement.textContent = 'Kes ' + (subtotal + deliveryCost).toFixed(2);
-                    totalCostElementInput.value = subtotal + deliveryCost;
-                }
-                console.log(totalCostElementInput.value);
-            },
-            error: function (xhr, status, error) {
-                console.log('Error: ' + xhr.responseText);
+            if (deliveryMethod === "door-delivery" || deliveryMethod === "pickup-point") {
+                countyInput.style.display = "block";
+            } else {
+                countyInput.style.display = "none";
             }
-        });
-    }
-
-    document.getElementById("ownership-options").addEventListener("change", function () {
-        const ownershipOption = document.getElementById("ownership-options").value;
-        const leaseWeeksDiv = document.getElementById("lease-weeks-div");
-
-        if (ownershipOption === "lease") {
-            leaseWeeksDiv.style.display = "block";
-        } else {
-            leaseWeeksDiv.style.display = "none";
+            calculateTotalCost();
         }
 
-        calculateTotalCost();
-    });
+        function calculateTotalCost() {
+            const deliveryMethod = document.getElementById("delivery-method").value;
+            const ownershipOption = document.getElementById("ownership-options").value;
+            const totalCostElement = document.getElementById("total-costs");
+            const totalCostElementInput = document.getElementById("total-costs-input");
+            const subtotalElement = document.getElementById("subtotal");
+            const subtotalLeaseElement = document.getElementById("subtotal-lease");
+            let subtotal = 0;
+            let leaseWeeks = 1;
 
-    document.getElementById("county-select").addEventListener("change", calculateTotalCost);
-    document.getElementById("delivery-method").addEventListener("change", calculateTotalCost);
-    document.getElementById("lease-weeks").addEventListener("change", calculateTotalCost);
+            if (ownershipOption === "purchase") {
+                subtotalElement.style.display = 'inline';
+                subtotalLeaseElement.style.display = 'none';
+                subtotal = parseFloat(subtotalElement.textContent);
+            } else if (ownershipOption === "lease") {
+                subtotalElement.style.display = 'none';
+                subtotalLeaseElement.style.display = 'inline';
+                subtotal = parseFloat(subtotalLeaseElement.textContent);
+                leaseWeeks = parseInt(document.getElementById("lease-weeks").value);
+            }
 
-    $(document).on('click', '.delete-button', function (e) {
-        e.preventDefault();
-        const prodid = $(this).data('index');
-        $.ajax({
-            type: 'POST',
-            url: '{% url "basket:basket_delete" %}',
-            data: {
-                productid: $(this).data('index'),
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                action: 'post',
-            },
-            success: function (json) {
-                $('.product-item[data-index="' + prodid + '"]').remove();
-                document.getElementById("subtotal").innerHTML = json.subtotal;
-                document.getElementById("basket-qty").innerHTML = json.qty;
+            let deliveryCost = 0;
 
-                // Display message if basket is empty
-                if (json.qty === 0) {
-                    const container = document.querySelector('.container');
-                    container.innerHTML = `
+            // Fetch the delivery cost based on the delivery method and selected county
+            const countyId = document.getElementById("county-select").value;
+            $.ajax({
+                url: '{% url "basket:get_delivery_cost" %}',
+                data: {
+                    delivery_method: deliveryMethod,
+                    county_id: countyId,
+                },
+                success: function (data) {
+                    deliveryCost = parseFloat(data.delivery_cost);
+                    if (ownershipOption === "lease") {
+                        totalCostElement.textContent = 'Kes ' + ((subtotal * leaseWeeks) + deliveryCost).toFixed(2);
+                        totalCostElementInput.value = (subtotal * leaseWeeks) + deliveryCost;
+                    } else {
+                        totalCostElement.textContent = 'Kes ' + (subtotal + deliveryCost).toFixed(2);
+                        totalCostElementInput.value = subtotal + deliveryCost;
+                    }
+                    console.log(totalCostElementInput.value);
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error: ' + xhr.responseText);
+                }
+            });
+        }
+
+        document.getElementById("ownership-options").addEventListener("change", function () {
+            const ownershipOption = document.getElementById("ownership-options").value;
+            const leaseWeeksDiv = document.getElementById("lease-weeks-div");
+
+            if (ownershipOption === "lease") {
+                leaseWeeksDiv.style.display = "block";
+            } else {
+                leaseWeeksDiv.style.display = "none";
+            }
+
+            calculateTotalCost();
+        });
+
+        document.getElementById("county-select").addEventListener("change", calculateTotalCost);
+        document.getElementById("delivery-method").addEventListener("change", calculateTotalCost);
+        document.getElementById("lease-weeks").addEventListener("change", calculateTotalCost);
+
+        $(document).on('click', '.delete-button', function (e) {
+            e.preventDefault();
+            let prodid = $(this).data('index');
+            $.ajax({
+                type: 'POST',
+                url: '{% url "basket:basket_delete" %}',
+                data: {
+                    productid: $(this).data('index'),
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action: 'post'
+                },
+                success: function (json) {
+                    $('.product-item[data-index="' + prodid + '"]').remove();
+                    document.getElementById("subtotal").innerHTML = json.subtotal;
+                    document.getElementById("basket-qty").innerHTML = json.qty;
+
+                    // Display message if basket is empty
+                    if (json.qty === 0) {
+                        const container = document.querySelector('.container');
+                        container.innerHTML = `
             <p id="no-items-in-basket" style="margin-bottom: 400px;margin-top: 20px;text-align: center;font-size: 18px;">
                 Your basket is empty <a href="{% url 'store:index' %}">Shop</a>
             </p>`;
+                    }
+
+                    displayMessage(json.message);
+                    calculateTotalCost(); // Ensure total cost recalculates
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
                 }
-
-                displayMessage(json.message);
-                calculateTotalCost(); // Ensure total cost recalculates
-            },
-            error: function (xhr, errmsg, err) {
-                console.log(xhr.status + ": " + xhr.responseText);
-            }
+            });
         });
-    });
 
-    $(document).on('click', '.update-button', function (e) {
-        e.preventDefault();
-        const prodid = $(this).data('index');
-        const quantity = $('#quantity' + prodid).val();
-        $.ajax({
-            type: 'POST',
-            url: '{% url "basket:basket_update" %}',
-            data: {
-                productid: $(this).data('index'),
-                productqty: quantity,
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                action: 'post'
-            },
-            success: function (json) {
-                document.getElementById("basket-qty").innerHTML = json.qty;
-                document.getElementById("subtotal").innerHTML = json.subtotal;
-                document.getElementById("no-of-basket-items").innerHTML = json.qty;
-                calculateTotalCost(); // Ensure total cost recalculates
-            },
-            error: function (xhr, errmsg, err) {
-                console.log(xhr.status + ": " + xhr.responseText);
-            }
-        });
-    });
-
-    // Toggle Wishlist Item
-    $(document).on('click', '.wishlist-button', function (e) {
-        e.preventDefault();
-        const button = $(this);
-        const product_id = button.data('product-id');
-        $.ajax({
-            type: 'POST',
-            url: '{% url "accounts:toggle_wishlist" %}',
-            data: {
-                productid: product_id,
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                action: 'post'
-            },
-            success: function (json) {
-                if (json.in_wishlist) {
-                    button.find('svg').removeClass('bi-heart').addClass('bi-heart-fill').css('fill', 'purple');
-                } else {
-                    button.find('svg').removeClass('bi-heart-fill').addClass('bi-heart').css('fill', 'wheat');
+        $(document).on('click', '.update-button', function (e) {
+            e.preventDefault();
+            let prodid = $(this).data('index');
+            let quantity = $('#quantity' + prodid).val();
+            $.ajax({
+                type: 'POST',
+                url: '{% url "basket:basket_update" %}',
+                data: {
+                    productid: $(this).data('index'),
+                    productqty: quantity,
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action: 'post'
+                },
+                success: function (json) {
+                    document.getElementById("basket-qty").innerHTML = json.qty;
+                    document.getElementById("subtotal").innerHTML = json.subtotal;
+                    document.getElementById("no-of-basket-items").innerHTML = json.qty;
+                    calculateTotalCost(); // Ensure total cost recalculates
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
                 }
-                displayMessage(json.message);
-            },
-            error: function (xhr, errmsg, err) {
-                console.log(xhr.status + ": " + xhr.responseText);
-            }
+            });
         });
-    });
 
-    function displayMessage(message) {
-        $('.alert-primary').html('<p>' + message + '</p>').show();
-    }
-</script>
-<script>
+        // Toggle Wishlist Item
+        $(document).on('click', '.wishlist-button', function (e) {
+            e.preventDefault();
+            const button = $(this);
+            let product_id = button.data('product-id');
+            $.ajax({
+                type: 'POST',
+                url: '{% url "accounts:toggle_wishlist" %}',
+                data: {
+                    productid: product_id,
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    action: 'post'
+                },
+                success: function (json) {
+                    if (json.in_wishlist) {
+                        button.find('svg').removeClass('bi-heart').addClass('bi-heart-fill').css('fill', 'purple');
+                    } else {
+                        button.find('svg').removeClass('bi-heart-fill').addClass('bi-heart').css('fill', 'wheat');
+                    }
+                    displayMessage(json.message);
+                },
+                error: function (xhr, errmsg, err) {
+                    console.log(xhr.status + ": " + xhr.responseText);
+                }
+            });
+        });
 
-    calculateTotalCost();
-    
-    function showHideAddressInput() {
-        const deliveryMethod = document.getElementById("delivery-method").value;
-        const countyInput = document.getElementById("county");
-
-        if (deliveryMethod === "door-delivery" || deliveryMethod === "pickup-point") {
-            countyInput.style.display = "block";
-        } else {
-            countyInput.style.display = "none";
+        function displayMessage(message) {
+            $('.alert-primary').html('<p>' + message + '</p>').show();
         }
-        calculateTotalCost();
-    }
-
-    function calculateTotalCost() {
-        const deliveryMethod = document.getElementById("delivery-method").value;
-        const ownershipOption = document.getElementById("ownership-options").value;
-        const totalCostElement = document.getElementById("total-costs");
-        const totalCostElementInput = document.getElementById("total-costs-input");
-        const subtotalElement = document.getElementById("subtotal");
-        const subtotalLeaseElement = document.getElementById("subtotal-lease");
-        let subtotal = 0;
-        let leaseWeeks = 1;
-
-        if (ownershipOption === "purchase") {
-            subtotalElement.style.display = 'inline';
-            subtotalLeaseElement.style.display = 'none';
-            subtotal = parseFloat(subtotalElement.textContent);
-        } else if (ownershipOption === "lease") {
-            subtotalElement.style.display = 'none';
-            subtotalLeaseElement.style.display = 'inline';
-            subtotal = parseFloat(subtotalLeaseElement.textContent);
-            leaseWeeks = parseInt(document.getElementById("lease-weeks").value);
-        }
-
-        let deliveryCost = 0;
-
-        // Fetch the delivery cost based on the delivery method and selected county
-        const countyId = document.getElementById("county-select").value;
-        $.ajax({
-            url: '{% url "basket:get_delivery_cost" %}',
-            data: {
-                delivery_method: deliveryMethod,
-                county_id: countyId,
-            },
-            success: function (data) {
-                deliveryCost = parseFloat(data.delivery_cost);
-                if (ownershipOption === "lease") {
-                    totalCostElement.textContent = 'Kes ' + ((subtotal * leaseWeeks) + deliveryCost).toFixed(2);
-                    totalCostElementInput.value = (subtotal * leaseWeeks) + deliveryCost;
-                } else {
-                    totalCostElement.textContent = 'Kes ' + (subtotal + deliveryCost).toFixed(2);
-                    totalCostElementInput.value = subtotal + deliveryCost;
-                }
-                console.log(totalCostElementInput.value);
-            },
-            error: function (xhr, status, error) {
-                console.log('Error: ' + xhr.responseText);
-            }
-        });
-    }
-
-    document.getElementById("ownership-options").addEventListener("change", function () {
-        const ownershipOption = document.getElementById("ownership-options").value;
-        const leaseWeeksDiv = document.getElementById("lease-weeks-div");
-
-        if (ownershipOption === "lease") {
-            leaseWeeksDiv.style.display = "block";
-        } else {
-            leaseWeeksDiv.style.display = "none";
-        }
-
-        calculateTotalCost();
-    });
-
-    document.getElementById("county-select").addEventListener("change", calculateTotalCost);
-    document.getElementById("delivery-method").addEventListener("change", calculateTotalCost);
-    document.getElementById("lease-weeks").addEventListener("change", calculateTotalCost);
-
-    $(document).on('click', '.delete-button', function (e) {
-        e.preventDefault();
-        let prodid = $(this).data('index');
-        $.ajax({
-            type: 'POST',
-            url: '{% url "basket:basket_delete" %}',
-            data: {
-                productid: $(this).data('index'),
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                action: 'post'
-            },
-            success: function (json) {
-                $('.product-item[data-index="' + prodid + '"]').remove();
-                document.getElementById("subtotal").innerHTML = json.subtotal;
-                document.getElementById("basket-qty").innerHTML = json.qty;
-
-                // Display message if basket is empty
-                if (json.qty === 0) {
-                    const container = document.querySelector('.container');
-                    container.innerHTML = `
-            <p id="no-items-in-basket" style="margin-bottom: 400px;margin-top: 20px;text-align: center;font-size: 18px;">
-                Your basket is empty <a href="{% url 'store:index' %}">Shop</a>
-            </p>`;
-                }
-
-                displayMessage(json.message);
-                calculateTotalCost(); // Ensure total cost recalculates
-            },
-            error: function (xhr, errmsg, err) {
-                console.log(xhr.status + ": " + xhr.responseText);
-            }
-        });
-    });
-
-    $(document).on('click', '.update-button', function (e) {
-        e.preventDefault();
-        let prodid = $(this).data('index');
-        let quantity = $('#quantity' + prodid).val();
-        $.ajax({
-            type: 'POST',
-            url: '{% url "basket:basket_update" %}',
-            data: {
-                productid: $(this).data('index'),
-                productqty: quantity,
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                action: 'post'
-            },
-            success: function (json) {
-                document.getElementById("basket-qty").innerHTML = json.qty;
-                document.getElementById("subtotal").innerHTML = json.subtotal;
-                document.getElementById("no-of-basket-items").innerHTML = json.qty;
-                calculateTotalCost(); // Ensure total cost recalculates
-            },
-            error: function (xhr, errmsg, err) {
-                console.log(xhr.status + ": " + xhr.responseText);
-            }
-        });
-    });
-
-    // Toggle Wishlist Item
-    $(document).on('click', '.wishlist-button', function (e) {
-        e.preventDefault();
-        const button = $(this);
-        let product_id = button.data('product-id');
-        $.ajax({
-            type: 'POST',
-            url: '{% url "accounts:toggle_wishlist" %}',
-            data: {
-                productid: product_id,
-                csrfmiddlewaretoken: '{{ csrf_token }}',
-                action: 'post'
-            },
-            success: function (json) {
-                if (json.in_wishlist) {
-                    button.find('svg').removeClass('bi-heart').addClass('bi-heart-fill').css('fill', 'purple');
-                } else {
-                    button.find('svg').removeClass('bi-heart-fill').addClass('bi-heart').css('fill', 'wheat');
-                }
-                displayMessage(json.message);
-            },
-            error: function (xhr, errmsg, err) {
-                console.log(xhr.status + ": " + xhr.responseText);
-            }
-        });
-    });
-
-    function displayMessage(message) {
-        $('.alert-primary').html('<p>' + message + '</p>').show();
-    }
-</script>
+    </script>
 
 
 

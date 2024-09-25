@@ -14,7 +14,7 @@ User = get_user_model()
 
 def index(request):
     posted_products = None
-    products = Product.objects.filter(is_active=True)
+    products = Product.objects.filter(is_active=True).order_by('?')
     if request.user.is_authenticated:
         seller_posted_products = Product.objects.filter(created_by=request.user, is_active=True)
         posted_products = seller_posted_products
@@ -87,7 +87,9 @@ def edit_product_details(request, id):
 
 def category_list(request, category_slug):
     category = get_object_or_404(Category, slug=category_slug)
-    if request.user.is_authenticated and request.user.is_buyer is not True:
+    user = get_object_or_404(User, username=request.user.username)
+
+    if request.user.is_authenticated and user.is_seller is True:
         seller_posted_category_books = Product.objects.filter(category=category, created_by=request.user,
                                                               is_active=True)
         return render(request, 'store/category.html', {'seller_posted_category_books': seller_posted_category_books,

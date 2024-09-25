@@ -1,64 +1,82 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}
-{% if category %}{{ category.name }}{% else %}Searched{% endif %}
+    {% if category %}{{ category.name }}{% else %}Searched{% endif %}
 {% endblock %}
 {% block web_content %}
 
 
-<main>
-  <div class="album py-5 bg-light">
-    <div class="container">
-
-      <div class="pb-3 h5">Looking for</div>
-      <div class="row g-3">
-      {% if user.is_authenticated and user.is_seller is not False %}
-          {% if seller_searched_items is not None %}
-              {% for product in seller_searched_items %}
-                <div class="col col-6 colo-xs-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
-                  <div class="card shadow-sm">
-                  <img class="img-fluid" style="object-fit: contain;border-radius: 5px;height: 250px;width: 100%" alt="Responsive image" src="{{ product.image.url }}">
-                    <div class="card-body">
-                      <p class="card-text" style="line-height: 20px;max-height: 20px;overflow: hidden">
-                        <a class="text-dark text-decoration-none" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
-                      </p>
-                      <div class="d-flex justify-content-between align-items-center">
-                        <small class="text-muted" style="line-height: 20px;max-height: 20px;overflow: hidden">10min read</small>
-                      </div>
+    <main>
+        <div class="album py-5 bg-light">
+            <div class="container">
+                {% if messages %}
+                    <div class="alert alert-primary" alert="{{ message.tags }}" role="alert">
+                        {% for message in messages %}
+                            {{ message }}
+                        {% endfor %}
                     </div>
-                  </div>
+                {% endif %}
+                <div class="pb-3 h5">Looking for</div>
+                <div class="row g-3">
+                    {% if user.is_authenticated and user.is_seller is not False %}
+                        {% if seller_searched_items is not None %}
+                            {% for product in seller_searched_items %}
+                                <div class="col col-6 colo-xs-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
+                                    <div class="card shadow-sm">
+                                        <img class="img-fluid"
+                                             style="object-fit: contain;border-radius: 5px;height: 250px;width: 100%"
+                                             alt="Responsive image" src="{{ product.image.url }}">
+                                        <div class="card-body">
+                                            <p class="card-text"
+                                               style="line-height: 20px;max-height: 20px;overflow: hidden">
+                                                <a class="text-dark text-decoration-none"
+                                                   href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                                            </p>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <small class="text-muted"
+                                                       style="line-height: 20px;max-height: 20px;overflow: hidden">10min
+                                                    read</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div>
+                                Book not found.
+                            </div>
+                        {% endif %}
+
+                    {% else %}
+                        {% for product in items %}
+                            <div class="col col-6 colo-xs-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
+                                <div class="card shadow-sm">
+                                    <img class="img-fluid"
+                                         style="object-fit: contain;border-radius: 5px;height: 250px;width: 100%"
+                                         alt="Responsive image" src="{{ product.image.url }}">
+
+                                    <div class="card-body">
+                                        <p class="card-text"
+                                           style="line-height: 20px;max-height: 20px;overflow: hidden">
+                                            <a class="text-dark text-decoration-none"
+                                               href="{{ product.get_absolute_url }}">{{ product.title }}</a>
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-muted"
+                                                   style="line-height: 20px;max-height: 20px;overflow: hidden">10min
+                                                read</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
                 </div>
-              {% endfor %}
-          {% else %}
-              <div>
-              Book not found.
-              </div>
-          {% endif %}
-        
-      {% else %}
-        {% for product in items %}
-            <div class="col col-6 colo-xs-6 col-sm-4 col-md-4 col-lg-3 col-xl-2">
-              <div class="card shadow-sm">
-              <img class="img-fluid" style="object-fit: contain;border-radius: 5px;height: 250px;width: 100%" alt="Responsive image" src="{{ product.image.url }}">
-    
-                <div class="card-body">
-                  <p class="card-text" style="line-height: 20px;max-height: 20px;overflow: hidden">
-                    <a class="text-dark text-decoration-none" href="{{ product.get_absolute_url }}">{{ product.title }}</a>
-                  </p>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted" style="line-height: 20px;max-height: 20px;overflow: hidden">10min read</small>
-                  </div>
-                </div>
-              </div>
             </div>
-        {% endfor %}
-      {% endif %}
-
-      </div>
-    </div>
-  </div>
+        </div>
 
 
-</main>
+    </main>
 
 {% endblock %}

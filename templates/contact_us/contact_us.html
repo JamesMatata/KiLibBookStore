@@ -5,14 +5,17 @@
     <style>
         #email,#name,#subject,#message{
             border: 1px solid purple;
+            border-radius: 2px;
+            padding: 7px 5px;
         }
         .messageSubmitButton{
             background-color: purple;
             color: white;
             padding: 10px 45px;
             border: 0;
-            border-radius: 3px;
+            border-radius: 2px;
             margin-top: 10px;
+            width: 100%;
         }
 
     </style>
@@ -31,8 +34,8 @@
                 <p class="text-center w-responsive mx-auto mb-5">Do you have any questions or suggestions? Please do not hesitate to contact us directly.<br> Our team will come back to you within
                         a matter of hours to help you.</p>
                 <hr>
-                <div class="row">
-                    <div class="col-md-9 mb-md-0 mb-5">
+                <div class="row" style="display: flex;flex-direction: row;align-items: center;justify-content: center">
+                    <div class="col col-12 colo-xs-12 col-sm-10 col-md-8 col-lg-7 col-xl-6">
                         <form id="contact-form" name="contact-form" action="" method="POST">
                             {% csrf_token %}
                             <div class="row">
@@ -69,32 +72,32 @@
                             </div>
                         </form>
 
-                        <div class="text-center text-md-left">
-                            <a onclick="document.getElementById('contact-form').submit();"><button class="messageSubmitButton">Send</button> </a>
+                        <div class="text-center text-md-left" style="width: 100%">
+                            <a onclick="document.getElementById('contact-form').submit();" style="width: 100%"><button class="messageSubmitButton">Send</button> </a>
                         </div>
                         <div class="status"></div>
                     </div>
-                    <div class="col-md-3 text-center">
+                    <div class="col col-12 colo-xs-12 col-sm-10 col-md-4 col-lg-4 col-xl-3">
                         <ul class="list-unstyled mb-0">
-                            <li>
+                            <li style="display: flex;flex-direction: column;align-items: center;justify-content: center">
                                 <div>
                                     <img style="height: 50px" src="/media/web_files/loctionIcon.png" alt="">
                                 </div>
-                                <p style="font-weight: 500;font-size: 18px">Nairobi, CA 94126, Kenya</p>
+                                <p style="font-weight: 500;font-size: 16px;margin-top: 5px">Nairobi, CA 94126, Kenya</p>
                             </li>
 
-                            <li>
+                            <li style="display: flex;flex-direction: column;align-items: center;justify-content: center">
                                 <div>
                                     <img style="height: 50px" src="/media/web_files/callIcon.png" alt="">
                                 </div>
-                                <p style="font-weight: 500;font-size: 18px">+254 723536722</p>
+                                <p style="font-weight: 500;font-size: 16px;margin-top: 5px">+254 723536722</p>
                             </li>
 
-                            <li>
+                            <li style="display: flex;flex-direction: column;align-items: center;justify-content: center">
                                 <div>
                                     <img style="height: 50px" src="/media/web_files/mailIcon.png" alt="">
                                 </div>
-                                <p style="font-weight: 500;font-size: 18px">customerservice@kilib.com</p>
+                                <p style="font-weight: 500;font-size: 16px;margin-top: 5px">customerservice@kilib.com</p>
                             </li>
                         </ul>
                     </div>
