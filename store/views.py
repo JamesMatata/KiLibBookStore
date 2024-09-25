@@ -87,9 +87,8 @@ def edit_product_details(request, id):
 
 def category_list(request, category_slug):
     category = get_object_or_404(Category, slug=category_slug)
-    user = get_object_or_404(User, username=request.user.username)
 
-    if request.user.is_authenticated and user.is_seller is True:
+    if request.user.is_authenticated and get_object_or_404(User, username=request.user.username).is_seller is True:
         seller_posted_category_books = Product.objects.filter(category=category, created_by=request.user,
                                                               is_active=True)
         return render(request, 'store/category.html', {'seller_posted_category_books': seller_posted_category_books,
