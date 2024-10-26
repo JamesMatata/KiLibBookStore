@@ -44,7 +44,7 @@
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/JamesMatata/KiLib-Bookstore.git
+   git clone https://github.com/JamesMatata/KiLibBookStore.git
    cd KiLib-Bookstore
    ```
 
