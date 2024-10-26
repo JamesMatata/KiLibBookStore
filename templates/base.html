@@ -68,7 +68,7 @@
                 <li><a class="nav-link" href="{% url 'contact:contact_us' %}">Contact Us</a></li>
             </ul>
             {% if user.is_authenticated and user.is_seller is not False %}
-                <form class="d-flex w-80 d-md" method="post" action="{% url 'store:searched_items' %}">
+                <form class="d-flex" style="margin: 0" method="post" action="{% url 'store:searched_items' %}">
                     {% csrf_token %}
                     <input class="form-control me-2" type="search" placeholder="Search Books" aria-label="Search"
                            name="searchBar">

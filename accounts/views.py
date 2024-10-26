@@ -277,7 +277,7 @@ def business_sells(request):
 
 def business_leases(request):
     total_paid = 0
-    leased_items = LeasedItem.objects.filter(product__created_by=request.user, Book_Lease__billing_status=True)
+    leased_items = LeasedItem.objects.filter(product__created_by=request.user, book_lease__billing_status=True)
     for item in leased_items:
         total_paid = item.quantity * item.lease_rate
 

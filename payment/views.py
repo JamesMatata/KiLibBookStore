@@ -78,7 +78,7 @@ def lipa_na_mpesa(amount, phone_number):
             "PartyA": phone_number,
             "PartyB": MPESA_SHORTCODE,
             "PhoneNumber": phone_number,
-            "CallBackURL": "https://giving-finer-foal.ngrok-free.app/pay/callback/",
+            "CallBackURL": "https://50af-41-89-22-3.ngrok-free.app/pay/callback/",
             "AccountReference": "12345678",
             "TransactionDesc": "Buy books",
         }
@@ -99,7 +99,7 @@ def lipa_na_mpesa(amount, phone_number):
 
 def process_payment(request):
     if not request.user.is_authenticated:
-        return redirect('accounts:buyer_login_page')
+        return redirect('accounts:buyer_login-page')
 
     wallet = get_object_or_404(Wallet, user=request.user)
     wallet_balance = wallet.balance
@@ -263,8 +263,8 @@ class LNMCallbackUrlAPIView(CreateAPIView):
             return Response({"status": "Failed"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def confirmPurchase(request, purchase_id):
-    order = get_object_or_404(Order, id=purchase_id)
+def confirmPurchase(request, id):
+    order = get_object_or_404(Order, id=id)
     if request.method == 'GET':
         receipt_no = request.GET.get('receiptnumber')
         transaction = get_object_or_404(LNMOnline, MpesaReceiptNumber=receipt_no, is_used=False)
@@ -280,8 +280,8 @@ def confirmPurchase(request, purchase_id):
     return HttpResponseRedirect(request.META["HTTP_REFERER"])
 
 
-def confirmLease(request, lease_id):
-    lease = get_object_or_404(BookLease, id=lease_id)
+def confirmLease(request, id):
+    lease = get_object_or_404(BookLease, id=id)
     if request.method == 'GET':
         receipt_no = request.GET.get('receiptnumber')
         transaction = get_object_or_404(LNMOnline, MpesaReceiptNumber=receipt_no, is_used=False)
